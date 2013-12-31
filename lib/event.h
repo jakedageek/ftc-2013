@@ -56,8 +56,12 @@ int Event_back = 0;
 int Event_filled = 0;
 short Event_buttonState1 = 0x00;
 short Event_buttonState2 = 0x00;
+short Event_dpadState1 = 0x00;
+short Event_dpadState2 = 0x00;
 
 void Event_scan() {
+	getJoystickSettings(joystick);
+
 	// Button events
 	{
 		// Controller 1
@@ -96,6 +100,35 @@ void Event_scan() {
 				}
 				Event_push(&ev);
 			}
+		}
+	}
+
+	// D-PAD events
+	{
+		// Controller 1
+		short c1dpad = joystick.joy1_TopHat;
+		if (c1dpad != Event_dpadState1) {
+			// new event
+			Event ev;
+			ev.type = EVENT_TYPE_DPAD;
+			ev.controller = EVENT_CONTROLLER_1;
+			ev.data = c1dpad;
+			Event_push(&ev);
+			// update the state
+			Event_dpadState1 = c1dpad;
+		}
+
+		// Controller 2
+		short c2dpad = joystick.joy2_TopHat;
+		if (c2dpad != Event_dpadState2) {
+			// new event
+			Event ev;
+			ev.type = EVENT_TYPE_DPAD;
+			ev.controller = EVENT_CONTROLLER_2;
+			ev.data = c1dpad;
+			Event_push(&ev);
+			// update the state
+			Event_dpadState2 = c1dpad;
 		}
 	}
 }
