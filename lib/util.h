@@ -40,10 +40,6 @@
 #define DPAD_LEFT 6
 #define DPAD_RIGHT 2
 
-#define SPEED 100
-#define SLOW_CONSTANT 0.45
-#define COLOR_BLACK 0
-
 #define degreesToRadians(x) (x * PI / (float) 180)
 #define radiansToDegrees(x) (x * (float) 180 / PI)
 
