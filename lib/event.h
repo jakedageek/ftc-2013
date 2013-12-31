@@ -78,6 +78,25 @@ void Event_scan() {
 				Event_push(&ev);
 			}
 		}
+
+		// Controller 2
+		for (int i = 0; i < NUM_BUTTONS; i++) {
+			short mask = 1 << i;
+			bool state = (Event_buttonState2 & mask);
+			bool now = (joystick.joy2_Buttons & mask);
+			if (state != now) {
+				Event ev;
+				ev.controller = EVENT_CONTROLLER_2;
+				if (now) {
+					ev.type = EVENT_TYPE_BUTTON_DOWN;
+					Event_buttonState2 |= mask;
+				} else {
+					ev.type = EVENT_TYPE_BUTTON_UP;
+					Event_buttonState2 &= ~mask;
+				}
+				Event_push(&ev);
+			}
+		}
 	}
 }
 
