@@ -49,12 +49,6 @@ task main()
 {
     waitForStart();
 
-#ifdef DEBUG
-    writeDebugStreamLine("Starting EventThread");
-#endif
-
-    StartTask(EventThread);
-
     // State variables
     int treadSpeed = 50;
     writeDebugStreamLine("Setting extender to %d", ARM_POSITION_RETRACTED);
@@ -126,8 +120,5 @@ task main()
         } else {
             motor[flagMotor] = 0;
         }
-
-        Event e;
-        consumeEvent(&e);
     }
 }
