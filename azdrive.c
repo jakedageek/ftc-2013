@@ -82,35 +82,13 @@ task main()
             motor[rotator] = 0;
         }
 
-        // Dumb extension controls
-#ifdef DEBUG
-        nxtDisplayTextLine(0, "extend:%d", ServoValue[extender]);
-#endif // DEBUG
-        if (joystick.joy1_TopHat == DPAD_LEFT) {
-            // Extend the arm
-            servo[extender] = ServoValue[extender] + 1;
-        } else if (joystick.joy1_TopHat == DPAD_RIGHT) {
-            // Retract the arm
-            servo[extender] = ServoValue[extender] - 1;
-        } else {
-            //servo[extender] = 127;
-        }
-
-        if (joystick.joy1_TopHat == DPAD_UP) {
-            // Extend the arm
-            servo[extender] = ARM_POSITION_EXTENDED;
-        } else if (joystick.joy1_TopHat == DPAD_DOWN) {
-            // Retract the arm
-            servo[extender] = ARM_POSITION_RETRACTED;
-        }
-
         // Twister controls
         if (joy1Btn(CONTROLLER_Y)) {
-            servo[flagExtender] = 255;
+            servo[flagExtender] = 152;
         } else if (joy1Btn(CONTROLLER_A)) {
-            servo[flagExtender] = 0;
+            servo[flagExtender] = 115;
         } else {
-            servo[flagExtender] = 127;
+            //servo[flagExtender] = 135;
         }
 
         if (joy1Btn(CONTROLLER_X)) {
