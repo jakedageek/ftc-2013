@@ -32,7 +32,7 @@ task main() {
 	float angle = 0;
 
 	// Find the zero
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 9; i++) {
 		zero += SensorValue[gyro];
 		wait1Msec(100);
 	}

@@ -113,7 +113,7 @@ task main() {
 void calibrateGyro() {
 	gyroZero = 0;
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 9; i++) {
 		gyroZero += SensorValue[gyro];
 		wait1Msec(100);
 	}
