@@ -39,8 +39,8 @@
 #include "lib/event.h" // I have no idea where waitForStart() is declared
 
 #define DRIVE_SPEED 100
-#define FORWARD_TIME 500
-#define FORWARD_TIME_2 2000
+#define FORWARD_TIME 400
+#define FORWARD_TIME_2 1250
 #define TURN_TIME 2000
 
 task main() {
@@ -48,7 +48,7 @@ task main() {
 
 	// Raise the arm
 	motor[rotator] = 100;
-	wait1Msec(2750);
+	wait1Msec(2250);
 	motor[rotator] = 0;
 
 	// Drive forward
@@ -61,7 +61,7 @@ task main() {
 	// Eject the block
 	motor[leftTread] = -60;
 	motor[rightTread] = -60;
-	wait1Msec(3000);
+	wait1Msec(2000);
 	motor[leftTread] = 0;
 	motor[rightTread] = 0;
 
