@@ -1,320 +1,184 @@
 /* Copyright (c) 2013 AJ Stubberud. All rights reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+*
+* Permission is hereby granted, free of charge, to any person obtaining a
+* copy of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation
+* the rights to use, copy, modify, merge, publish, distribute, sublicense,
+* and/or sell copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+* DEALINGS IN THE SOFTWARE.
 */
-
-// This header file houses an event-based input engine
-// which allows you to detect button presses and D-PAD
-// changes, rather than query which buttons are being held
-// at a given monment.
-//
-// Here are the functions you should be aware of:
-// - task EventThread()
-// - void consumeEvent(Event *returnValue)
-//
-// Here are the data structures you should be aware of:
-// - Event (struct):
-//   - EventType type
-//   - EventData data
-//
-// Here are the data types you should be aware of:
-// - EventType - enumeration to differentiate between types
-//   of events.  There are several different types:
-//   - EVENT_TYPE_NONE
-//   - EVENT_TYPE_CONTROLLER_1_BUTTON_DOWN
-//   - EVENT_TYPE_CONTROLLER_1_BUTTON_UP
-//   - EVENT_TYPE_CONTROLLER_1_POV_CHANGE (changes in state of D-PAD)
-//   - EVENT_TYPE_CONTROLLER_2_BUTTON_DOWN
-//   - EVENT_TYPE_CONTROLLER_2_BUTTON_UP
-//   - EVENT_TYPE_CONTROLLER_2_POV_CHANGE
-// - EventData - just declared as `typedef int'
-//
-// To start the engine, just launch the EventThread task
-// when your program runs, like so:
-//     StartTask(EventThread)
-//
-// The event thread will detect events and add them to the
-// queue automatically.  When you want the engine to tell you
-// what it has detected, call consumeEvent() like this:
-//     Event detectedEvent;
-//     consumeEvent(&detectedEvent);
-//
-// consumeEvent() will return the first event on the queue;
-// this event could be empty or filled.  After you ask the
-// engine for the event, you can check to see what type of
-// event you have by looking at the values of
-// detectedEvent.type and detectedEvent.data.  The 'type' field
-// tells you what type of event it is.  The 'data' field
-// is just a number associated with the event.  For button press
-// events, the number will be equivalent to the number of the
-// button being pressed or released (you can view the codes in
-// util.h)
-//
-// Additional notes:
-// Don't go too long without checking to see if the event engine
-// has detected anything.  Each button press generates an event,
-// and the queue has a maximum size of 200.  Events in excess of
-// this will be dropped.
 
 #ifndef EVENT_H
 #define EVENT_H
 
-/*
- *           event array
- * _______________________________
- * |    |    |    |    |    |    |
- * |    |    |    |    |    |    |
- * -------------------------------
- *         ^
- *         |
- *       cursor
- *
- * consumeEvent()
- *     - return the event under the cursor
- *     - zero out the event under the cursor
- *     - increment the cursor
- */
-
-#include "util.h"
-#include "thread.h"
 #include "JoystickDriver.c"
+#include "util.h"
+
+#define EVENT_TYPE_NONE 0x00
+#define EVENT_TYPE_BUTTON_DOWN 0x01
+#define EVENT_TYPE_BUTTON_UP 0x02
+#define EVENT_TYPE_DPAD 0x03
+
+#define EVENT_CONTROLLER_NONE 0x00
+#define EVENT_CONTROLLER_1 0x10
+#define EVENT_CONTROLLER_2 0x11
 
 #define MAX_EVENTS 200
 #define NUM_BUTTONS 13
-#define eventIsEmpty(x) (x->type == EVENT_TYPE_NONE)
-
-typedef int EventData;
-
-typedef enum {
-    EVENT_TYPE_NONE,
-    EVENT_TYPE_CONTROLLER_1_BUTTON_DOWN,
-    EVENT_TYPE_CONTROLLER_1_BUTTON_UP,
-    EVENT_TYPE_CONTROLLER_1_POV_CHANGE,
-    EVENT_TYPE_CONTROLLER_2_BUTTON_DOWN,
-    EVENT_TYPE_CONTROLLER_2_BUTTON_UP,
-    EVENT_TYPE_CONTROLLER_2_POV_CHANGE
-} EventType;
 
 typedef struct {
-    EventType type;
-    EventData data;
+	int type;
+	int controller;
+	int data;
 } Event;
 
-// -------------------------
-// Global variable declarations
+// Functions
+void Event_scan();
+void Event_push(Event *ev);
+void Event_pop(Event *ret);
+int Event_nextIndex(int i);
 
-Mutex _eventMutex;
-Event _eventArray[MAX_EVENTS];
-Event *_firstEvent;
-Event *_lastEvent;
-Event *_eventCursor;
+// Variables
+Event Event_array[MAX_EVENTS];
+int Event_front = 0;
+int Event_back = 0;
+int Event_filled = 0;
+short Event_buttonState1 = 0x00;
+short Event_buttonState2 = 0x00;
+short Event_dpadState1 = 0x00;
+short Event_dpadState2 = 0x00;
 
-short _c1State;
-short _c1POV = -1;
-short _c2State;
-short _c2POV = -1;
+void Event_scan() {
+	getJoystickSettings(joystick);
 
-// ---------------------------
-// Function declarations
+	// Button events
+	{
+		// Controller 1
+		for (int i = 0; i < NUM_BUTTONS; i++) {
+			short mask = 1 << i;
+			bool state = (Event_buttonState1 & mask);
+			bool now = (joystick.joy1_Buttons & mask);
+			if (state != now) {
+				Event ev;
+				ev.controller = EVENT_CONTROLLER_1;
+				if (now) {
+					ev.type = EVENT_TYPE_BUTTON_DOWN;
+					Event_buttonState1 |= mask;
+				} else {
+					ev.type = EVENT_TYPE_BUTTON_UP;
+					Event_buttonState1 &= ~mask;
+				}
+				Event_push(&ev);
+			}
+		}
 
-task EventThread();
-void Event_clear(Event *e);
-Event *findUnusedEvent();
-Event *nextEvent(const Event *e);
-void addEvent(const Event *e);
-void consumeEvent(Event *ret);
+		// Controller 2
+		for (int i = 0; i < NUM_BUTTONS; i++) {
+			short mask = 1 << i;
+			bool state = (Event_buttonState2 & mask);
+			bool now = (joystick.joy2_Buttons & mask);
+			if (state != now) {
+				Event ev;
+				ev.controller = EVENT_CONTROLLER_2;
+				if (now) {
+					ev.type = EVENT_TYPE_BUTTON_DOWN;
+					Event_buttonState2 |= mask;
+				} else {
+					ev.type = EVENT_TYPE_BUTTON_UP;
+					Event_buttonState2 &= ~mask;
+				}
+				Event_push(&ev);
+			}
+		}
+	}
 
-// ---------------------------
+	// D-PAD events
+	{
+		// Controller 1
+		short c1dpad = joystick.joy1_TopHat;
+		if (c1dpad != Event_dpadState1) {
+			// new event
+			Event ev;
+			ev.type = EVENT_TYPE_DPAD;
+			ev.controller = EVENT_CONTROLLER_1;
+			ev.data = c1dpad;
+			Event_push(&ev);
+			// update the state
+			Event_dpadState1 = c1dpad;
+		}
 
-task EventThread()
-{
-    hogCPU();
-#ifdef DEBUG
-    writeDebugStreamLine("EventThread() started");
-    PlaySound(soundBeepBeep);
-#endif
-
-    // Initialize storage and variables
-    Mutex_init(&_eventMutex);
-
-    for (int i = 0; i < MAX_EVENTS; i++)
-        Event_clear(&_eventArray[i]);
-
-    _firstEvent = &_eventArray[0];
-    _lastEvent = &_eventArray[MAX_EVENTS - 1];
-    _eventCursor = _firstEvent;
-
-    releaseCPU();
-
-    // Constantly scan events
-    while (true)
-    {
-        getJoystickSettings(joystick);
-
-        // Check button bitmaps for changes
-        // Controller 1 ------------------------------------------------
-        for (int i = 0; i < NUM_BUTTONS; i++) {
-            short mask = 1 << i;
-            bool state = (_c1State & mask) == mask;
-            bool pressed = (joystick.joy1_Buttons & mask) == mask;
-            if (state != pressed) {
-                // Button was pressed
-                Event newEvent;
-                newEvent.type = (pressed) ? EVENT_TYPE_CONTROLLER_1_BUTTON_DOWN : EVENT_TYPE_CONTROLLER_1_BUTTON_UP;
-                newEvent.data = i + 1;
-                addEvent(&newEvent);
-
-                // Fix the state
-                if (pressed) {
-                    // tell the state that its pressed
-                    _c1State = _c1State | mask;
-                } else {
-                    // tell the state that it isnt pressed
-                    _c1State = _c1State & ~mask;
-                }
-            }
-        }
-
-        if (_c1POV != joystick.joy1_TopHat) {
-            Event newEvent;
-            newEvent.type = EVENT_TYPE_CONTROLLER_1_POV_CHANGE;
-            newEvent.data = joystick.joy1_TopHat;
-            addEvent(&newEvent);
-            _c1POV = joystick.joy1_TopHat;
-        }
-
-        // Controller 2 -------------------------------------------------
-        for (int i = 0; i < NUM_BUTTONS; i++) {
-            short mask = 1 << i;
-            bool state = (_c2State & mask) == mask;
-            bool pressed = (joystick.joy2_Buttons & mask) == mask;
-            if (state != pressed) {
-                // Button was pressed
-                Event newEvent;
-                newEvent.type = (pressed) ? EVENT_TYPE_CONTROLLER_2_BUTTON_DOWN : EVENT_TYPE_CONTROLLER_2_BUTTON_UP;
-                newEvent.data = i + 1;
-                addEvent(&newEvent);
-
-                // Fix the state
-                if (pressed) {
-                    // tell the state that its pressed
-                    _c2State = _c2State | mask;
-                } else {
-                    // tell the state that it isnt pressed
-                    _c2State = _c2State & ~mask;
-                }
-            }
-        }
-
-        if (_c2POV != joystick.joy2_TopHat) {
-            Event newEvent;
-            newEvent.type = EVENT_TYPE_CONTROLLER_2_POV_CHANGE;
-            newEvent.data = joystick.joy2_TopHat;
-            addEvent(&newEvent);
-            _c2POV = joystick.joy2_TopHat;
-        }
-
-        // ----------------------------------------------------------------
-    }
+		// Controller 2
+		short c2dpad = joystick.joy2_TopHat;
+		if (c2dpad != Event_dpadState2) {
+			// new event
+			Event ev;
+			ev.type = EVENT_TYPE_DPAD;
+			ev.controller = EVENT_CONTROLLER_2;
+			ev.data = c1dpad;
+			Event_push(&ev);
+			// update the state
+			Event_dpadState2 = c1dpad;
+		}
+	}
 }
 
-Event *nextEvent(const Event *e)
-// Internal function - don't use this in a drive program
-// This function returns the next event in the queue.
-// This, along with consume event, is essentially the entire queue
-// implementation
-{
-    if (e == _lastEvent)
-        return _firstEvent;
-    else
-        return e + 1;
+void Event_push(Event *ev) {
+	int i = Event_nextIndex(Event_back);
+
+	// Check to see if there is room in the queue
+	if (Event_filled == MAX_EVENTS) {
+		writeDebugStreamLine("There is no room in the event queue");
+		return;
+	}
+
+	Event_array[Event_back].type = ev->type;
+	Event_array[Event_back].controller = ev->controller;
+	Event_array[Event_back].data = ev->data;
+	Event_back = i;
+	Event_filled++;
 }
 
-Event *findUnusedEvent()
-// Internal function - don't use this in a drive program
-// This function returns the location of the closest empty
-// event after the cursor.  Essentially returns the event
-// after the back of the queue
-{
-    Event *curr = _eventCursor;
-    if (eventIsEmpty(curr))
-        return curr;
-    else
-        curr = nextEvent(curr);
+void Event_pop(Event *ret) {
+	int i = Event_nextIndex(Event_front);
 
-    while (curr != _eventCursor)
-    {
-        if (eventIsEmpty(curr))
-            return curr;
-        curr = nextEvent(curr);
-    }
+	// Check to see if the queue is empty
+	if (Event_filled == 0) {
+		//writeDebugStreamLine("Queue is empty");
+		ret->type = EVENT_TYPE_NONE;
+		ret->controller = EVENT_CONTROLLER_NONE;
+		ret->data = 0;
+		return;
+	}
 
-    // If we got here, that means we couldn't find any
-    // empty events
-    return NULL;
+	// Return the event
+	ret->type = Event_array[Event_front].type;
+	ret->controller = Event_array[Event_front].controller;
+	ret->data = Event_array[Event_front].data;
+	// Clear it
+	Event_array[Event_front].type = EVENT_TYPE_NONE;
+	Event_array[Event_front].controller = EVENT_CONTROLLER_NONE;
+	Event_array[Event_front].data = 0;
+	Event_front = i;
+	Event_filled--;
 }
 
-void addEvent(const Event *e)
-// Internal function - don't use this in a drive program
-// This function adds an event to the back of the queue (if there is space)
-{
-    Mutex_lock(&_eventMutex);
-
-    Event *empty = findUnusedEvent();
-    if (empty == NULL) {
-        writeDebugStreamLine("Could not find empty event");
-        Mutex_unlock(&_eventMutex);
-        return; // We can't do anything
-    }
-
-    empty->type = e->type;
-    empty->data = e->data;
-
-#ifdef DEBUG
-    writeDebugStreamLine("Added new button press event with code: %d type: %d",
-        e->data, e->type);
-#endif
-
-    Mutex_unlock(&_eventMutex);
-}
-
-void consumeEvent(Event *ret)
-// Returns the event at the front of the queue
-// This event could be filled or empty
-{
-    Mutex_lock(&_eventMutex);
-
-    ret->type = _eventCursor->type;
-    ret->data = _eventCursor->data;
-
-    Event_clear(_eventCursor);
-    _eventCursor = nextEvent(_eventCursor);
-
-    Mutex_unlock(&_eventMutex);
-}
-
-void Event_clear(Event *e)
-// Clears the given event
-// Sets the type to NONE and data to 0
-{
-    e->type = EVENT_TYPE_NONE;
-    e->data = 0;
+int Event_nextIndex(int i) {
+	i++;
+	if (i >= MAX_EVENTS) {
+		i = 0;
+	}
+	return i;
 }
 
 #endif // EVENT_H
