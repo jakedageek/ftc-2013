@@ -23,7 +23,7 @@
 #define TURN_TIME 2000
 
 task main() {
-	//waitForStart();
+	waitForStart();
 
 	// Raise the arm
 	motor[rotator] = 100;
