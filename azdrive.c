@@ -6,7 +6,6 @@
 #pragma config(Motor,  mtr_S1_C2_2,     flagMotor,     tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_1,     leftTread,     tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     rightTread,    tmotorTetrix, openLoop, reversed)
-#pragma config(Servo,  srvo_S1_C3_1,    extender,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C3_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_4,    servo4,               tServoNone)
@@ -42,17 +41,12 @@
 
 #define MOTOR_SPEED_ROTATOR 100
 
-#define ARM_POSITION_RETRACTED 10
-#define ARM_POSITION_EXTENDED 255
-
 task main()
 {
     waitForStart();
 
     // State variables
     int treadSpeed = 50;
-    writeDebugStreamLine("Setting extender to %d", ARM_POSITION_RETRACTED);
-    servo[extender] = ARM_POSITION_RETRACTED;
 
     while (true) {
         // Drive controls
