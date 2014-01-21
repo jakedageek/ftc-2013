@@ -40,13 +40,11 @@
 #include "lib/event.h"
 
 #define MOTOR_SPEED_ROTATOR 100
+#define TREAD_SPEED 50
 
 task main()
 {
     waitForStart();
-
-    // State variables
-    int treadSpeed = 50;
 
     while (true) {
         // Drive controls
@@ -56,12 +54,12 @@ task main()
         // Tread controls
         if (joy1Btn(CONTROLLER_R1)) {
             // Suck in
-            motor[leftTread] = treadSpeed;
-            motor[rightTread] = treadSpeed;
+            motor[leftTread] = TREAD_SPEED;
+            motor[rightTread] = TREAD_SPEED;
         } else if (joy1Btn(CONTROLLER_R2)) {
             // Push out
-            motor[leftTread] = -treadSpeed;
-            motor[rightTread] = -treadSpeed;
+            motor[leftTread] = -TREAD_SPEED;
+            motor[rightTread] = -TREAD_SPEED;
         } else {
             motor[leftTread] = 0;
             motor[rightTread] = 0;
