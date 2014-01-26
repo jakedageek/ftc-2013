@@ -28,6 +28,7 @@ void calibrateGyro();
 void turnRight(float degrees, int speed);
 void turnLeft(float degrees, int speed);
 void turnLeftT(float degrees, int speed);
+int getGyroValue();
 
 int gyro_zero;
 
@@ -100,6 +101,10 @@ void turnLeftT(float degrees, int speed) {
 
 	motor[leftDrive] = 0;
 	motor[rightDrive] = 0;
+}
+
+int getGyroValue() {
+	return SensorValue[gyro] - gyro_zero;
 }
 
 #endif // GYRO_H
