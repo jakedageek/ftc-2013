@@ -45,6 +45,12 @@ long getTimeDelta() {
 		timing_lastUpdate = nSysTime;
 	}
 
+	// ############# Bug #1 ###############
+	// It seems that the system clock is not updated
+	// without this wait call.  It is required to get
+	// the scheduler to run the OS code properly
+	wait1Msec(1);
+
 	return delta;
 }
 
