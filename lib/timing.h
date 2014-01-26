@@ -25,9 +25,12 @@
 #define TIME_MAX 0xFFFF
 
 bool timing_initialized = false;
+bool timing_timer_initialized = false;
 unsigned long timing_lastUpdate = 0;
+unsigned long timing_timer_lastValue = 0;
+TTimers timing_timer = T1;
 
-long getTimeDelta() {
+unsigned long getTimeDelta() {
 	if (!timing_initialized) {
 		timing_initialized = true;
 		timing_lastUpdate = nSysTime;
@@ -50,6 +53,29 @@ long getTimeDelta() {
 	// without this wait call.  It is required to get
 	// the scheduler to run the OS code properly
 	wait1Msec(1);
+
+	return delta;
+}
+
+void setTimeDeltaTimer(TTimers timer) {
+	timing_timer_initialized = false;
+	timing_timer = timer;
+}
+
+void resetTimeDeltaTimer() {
+	timing_timer_initialized = false;
+}
+
+unsigned long getTimeDeltaTimer() {
+	if (!timing_timer_initialized) {
+		ClearTimer(timing_timer);
+		timing_timer_initialized = true;
+		timing_timer_lastValue = 0;
+	}
+
+	long time = time1[timing_timer];
+	long delta = time - timing_timer_lastValue;
+	timing_timer_lastValue = time;
 
 	return delta;
 }
