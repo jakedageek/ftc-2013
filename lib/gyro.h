@@ -82,4 +82,23 @@ void turnLeft(float degrees, int speed) {
 	motor[rightDrive] = 0;
 }
 
+void turnLeftT(float degrees, int speed) {
+	float turned = 0;
+
+	wait1Msec(1000);
+	resetTimeDeltaTimer();
+	getTimeDeltaTimer();
+	motor[leftDrive] = -speed;
+	motor[rightDrive] = speed;
+
+	while(abs(turned) < degrees) {
+		float sValue = SensorValue[gyro];
+		float delta = getTimeDeltaTimer();
+		turned += (sValue - gyro_zero) * delta / 1000.0;
+	}
+
+	motor[leftDrive] = 0;
+	motor[rightDrive] = 0;
+}
+
 #endif // GYRO_H
