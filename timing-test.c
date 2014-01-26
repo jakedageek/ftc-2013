@@ -43,6 +43,7 @@ task main()
 	wait1Msec(10000);
 	writeDebugStreamLine("delta: %d", getTimeDelta());
 
+	// getTimeDeltaTimer()
 	writeDebugStreamLine("Testing getTimeDeltaTimer() (using default timer)");
 	writeDebugStreamLine("Waiting 1 second");
 	resetTimeDeltaTimer();
