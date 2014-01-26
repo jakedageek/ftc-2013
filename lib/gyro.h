@@ -27,6 +27,7 @@
 void calibrateGyro();
 void turnRight(float degrees, int speed);
 void turnLeft(float degrees, int speed);
+void turnLeftT(float degrees, int speed);
 
 int gyro_zero;
 
