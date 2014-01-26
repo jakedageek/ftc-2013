@@ -54,11 +54,11 @@ task main() {
 				switch(ev.data) {
 					case CONTROLLER_A:
 						// Rotate 90 degrees to the left
-						turnLeft(90.0, 50);
+						turnLeftT(86.5, 45);
 						break;
 					case CONTROLLER_B:
 						// Rotate 180 degrees to the left
-						turnLeft(180.0, 50);
+						turnLeftT(176.5, 45);
 						break;
 				}
 				break;
