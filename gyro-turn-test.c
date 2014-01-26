@@ -8,12 +8,12 @@
 #pragma config(Motor,  mtr_S1_C2_2,     flagMotor,     tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_1,     leftTread,     tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     rightTread,    tmotorTetrix, openLoop, reversed)
-#pragma config(Servo,  srvo_S1_C3_1,    extender,             tServoStandard)
+#pragma config(Servo,  srvo_S1_C3_1,    flagExtender,         tServoStandard)
 #pragma config(Servo,  srvo_S1_C3_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_5,    servo5,               tServoNone)
-#pragma config(Servo,  srvo_S1_C3_6,    flagExtender,         tServoStandard)
+#pragma config(Servo,  srvo_S1_C3_6,    servo6,               tServoNone)
 
 /* Copyright (c) 2013 AJ Stubberud. All rights reserved.
 *
