@@ -31,12 +31,16 @@ void turnLeft(float degrees, int speed);
 int gyro_zero;
 
 void calibrateGyro() {
+	wait1Msec(1000);
+
 	gyro_zero = 0;
 
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < 10; i++) {
 		gyro_zero += SensorValue[gyro];
+		writeDebugStreamLine("total: %d", gyro_zero);
 		wait1Msec(100);
 	}
+	gyro_zero += 5; // Round to nearest 10
 	gyro_zero /= 10;
 }
 
@@ -50,7 +54,9 @@ void turnRight(float degrees, int speed) {
 	motor[rightDrive] = -speed;
 
 	while(abs(turned) < degrees) {
-		turned += (SensorValue[gyro] - gyro_zero) * getTimeDelta() / 1000.0;
+		float sValue = SensorValue[gyro];
+		float delta = getTimeDelta();
+		turned += (sValue - gyro_zero) * delta / 1000.0;
 	}
 
 	motor[leftDrive] = 0;
@@ -67,7 +73,9 @@ void turnLeft(float degrees, int speed) {
 	motor[rightDrive] = speed;
 
 	while(abs(turned) < degrees) {
-		turned += (SensorValue[gyro] - gyro_zero) * getTimeDelta() / 1000.0;
+		float sValue = SensorValue[gyro];
+		float delta = getTimeDelta();
+		turned += (sValue - gyro_zero) * delta / 1000.0;
 	}
 
 	motor[leftDrive] = 0;
