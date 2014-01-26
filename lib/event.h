@@ -72,6 +72,7 @@ void Event_scan() {
 			if (state != now) {
 				Event ev;
 				ev.controller = EVENT_CONTROLLER_1;
+				ev.data = i + 1;
 				if (now) {
 					ev.type = EVENT_TYPE_BUTTON_DOWN;
 					Event_buttonState1 |= mask;
@@ -91,6 +92,7 @@ void Event_scan() {
 			if (state != now) {
 				Event ev;
 				ev.controller = EVENT_CONTROLLER_2;
+				ev.data = i + 1;
 				if (now) {
 					ev.type = EVENT_TYPE_BUTTON_DOWN;
 					Event_buttonState2 |= mask;
