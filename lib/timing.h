@@ -57,6 +57,10 @@ unsigned long getTimeDelta() {
 	return delta;
 }
 
+void resetTimeDelta() {
+	timing_initialized = false;
+}
+
 void setTimeDeltaTimer(TTimers timer) {
 	timing_timer_initialized = false;
 	timing_timer = timer;
@@ -78,10 +82,6 @@ unsigned long getTimeDeltaTimer() {
 	timing_timer_lastValue = time;
 
 	return delta;
-}
-
-void resetTimeDelta() {
-	timing_initialized = false;
 }
 
 #endif // TIMING_H
