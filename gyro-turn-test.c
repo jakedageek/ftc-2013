@@ -41,6 +41,8 @@
 #include "lib/util.h"
 
 task main() {
+	calibrateGyro();
+
 	while (true) {
 		Event ev;
 		Event_scan();
