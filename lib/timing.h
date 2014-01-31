@@ -28,7 +28,7 @@ bool timing_initialized = false;
 bool timing_timer_initialized = false;
 unsigned long timing_lastUpdate = 0;
 unsigned long timing_timer_lastValue = 0;
-TTimers timing_timer = T1;
+TTimers timing_timer = T4;
 
 unsigned long getTimeDelta() {
 	if (!timing_initialized) {
@@ -36,6 +36,12 @@ unsigned long getTimeDelta() {
 		timing_lastUpdate = nSysTime;
 		return 0;
 	}
+
+	// ############# Bug #1 ###############
+	// It seems that the system clock is not updated
+	// without this wait call.  It is required to get
+	// the scheduler to run the OS code properly
+	wait1Msec(1);
 
 	long delta;
 
@@ -47,12 +53,6 @@ unsigned long getTimeDelta() {
 		delta = nSysTime - timing_lastUpdate;
 		timing_lastUpdate = nSysTime;
 	}
-
-	// ############# Bug #1 ###############
-	// It seems that the system clock is not updated
-	// without this wait call.  It is required to get
-	// the scheduler to run the OS code properly
-	wait1Msec(1);
 
 	return delta;
 }
