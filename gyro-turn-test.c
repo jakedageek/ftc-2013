@@ -50,18 +50,19 @@ task main() {
 
 		switch (ev.type) {
 			case EVENT_TYPE_BUTTON_DOWN:
-				writeDebugStreamLine("Received event from controller: %d", ev.controller);
 				switch(ev.data) {
 					case CONTROLLER_A:
 						// Rotate 90 degrees to the left
-						turnLeftT(86.5, 45);
+						turnLeftT(84, 45);
 						break;
 					case CONTROLLER_B:
 						// Rotate 180 degrees to the left
-						turnLeftT(176.5, 45);
+						turnLeftT(174, 45);
 						break;
 				}
 				break;
 		}
+
+		nxtDisplayTextLine(0, "gyro-raw:%d", SensorValue[gyro]);
 	}
 }
