@@ -1,5 +1,19 @@
-#pragma config(Sensor, S1,     gyro,           sensorI2CHiTechnicGyro)
-
+#pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  HTMotor)
+#pragma config(Sensor, S2,     irLeft,         sensorHiTechnicIRSeeker600)
+#pragma config(Sensor, S3,     irRight,        sensorHiTechnicIRSeeker600)
+#pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
+#pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_2,     rightDrive,    tmotorTetrix, openLoop, reversed)
+#pragma config(Motor,  mtr_S1_C2_1,     rotator,       tmotorTetrix, openLoop, reversed)
+#pragma config(Motor,  mtr_S1_C2_2,     flagMotor,     tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_1,     leftTread,     tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_2,     rightTread,    tmotorTetrix, openLoop, reversed)
+#pragma config(Servo,  srvo_S1_C3_1,    flagExtender,         tServoStandard)
+#pragma config(Servo,  srvo_S1_C3_2,    servo2,               tServoNone)
+#pragma config(Servo,  srvo_S1_C3_3,    servo3,               tServoNone)
+#pragma config(Servo,  srvo_S1_C3_4,    servo4,               tServoNone)
+#pragma config(Servo,  srvo_S1_C3_5,    servo5,               tServoNone)
+#pragma config(Servo,  srvo_S1_C3_6,    servo6,               tServoNone)
 /* Copyright (c) 2013 AJ Stubberud. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a
@@ -21,49 +35,25 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
-#define TIME_MAX 0xFFFF
+#include "lib/timing.h"
+#include "lib/gyro.h"
 
 bool initialized = false;
 unsigned long lastUpdate = 0;
 
-long getTimeDelta() {
-	if (!initialized) {
-		initialized = true;
-		lastUpdate = nSysTime;
-		return 0;
-	}
-
-	long delta;
-
-	if (nSysTime < lastUpdate) {
-		// The time has looped around
-		delta = TIME_MAX - lastUpdate + nSysTime;
-		lastUpdate = nSysTime;
-	} else {
-		delta = nSysTime - lastUpdate;
-		lastUpdate = nSysTime;
-	}
-
-	return delta;
-}
-
 task main() {
-
-	int zero = 0;
 	float angle = 0;
 
 	// Find the zero
-	for (int i = 0; i < 9; i++) {
-		zero += SensorValue[gyro];
-		wait1Msec(100);
-	}
-	zero /= 10;
+	calibrateGyro();
 
 	while(true) {
-		angle += ((SensorValue[gyro]) - zero) * getTimeDelta() / 1000.0;
+		float sValue = getGyroValue();
+		float delta = getTimeDelta();
+		angle += sValue * delta / 1000.0;
 
-		nxtDisplayTextLine(0, "%d", SensorValue[gyro]);
+		nxtDisplayTextLine(0, "%d", sValue);
 		nxtDisplayTextLine(1, "%.4f", angle);
-		nxtDisplayTextLine(2, "%d", zero);
+		nxtDisplayTextLine(2, "%d", gyro_zero);
 	}
 }
