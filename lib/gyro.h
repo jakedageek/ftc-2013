@@ -36,15 +36,15 @@ int gyro_zero;
 void calibrateGyro() {
 	wait1Msec(1000);
 
+	float gyro_zerof = 0;
 	gyro_zero = 0;
 
-	for (int i = 0; i < 10; i++) {
-		gyro_zero += SensorValue[gyro];
-		writeDebugStreamLine("total: %d", gyro_zero);
-		wait1Msec(100);
+	for (int i = 0; i < 400; i++) {
+		gyro_zerof += SensorValue[gyro] / 400.0;
+		wait1Msec(4);
 	}
-	gyro_zero += 5; // Round to nearest 10
-	gyro_zero /= 10;
+	gyro_zerof += .5;
+	gyro_zero = gyro_zerof;
 }
 
 void turnRight(float degrees, int speed) {
