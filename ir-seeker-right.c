@@ -105,7 +105,7 @@ task main() {
 	motor[leftDrive] = -DRIVE_SPEED;
 	motor[rightDrive] = -DRIVE_SPEED;
 	// During this, move the arm down
-	motor[rotator] = -100;
+	//motor[rotator] = -100;
 	wait1Msec(1200);
 	motor[rotator] = 0;
 	wait1Msec(timeForward + 3000 - 1200);
