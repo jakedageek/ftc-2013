@@ -43,7 +43,7 @@
 #include "event.h"
 
 #define BLOCK_LOADER_OUT 170
-#define BLOCK_LOADER_IN 100
+#define BLOCK_LOADER_IN 75
 #define MOTOR_SPEED_ROTATOR 100
 #define TREAD_SPEED 50
 
@@ -67,7 +67,7 @@ task main()
             motor[leftTread] = -TREAD_SPEED;
             motor[rightTread] = -TREAD_SPEED;
             if (ServoValue(blockLoader) > BLOCK_LOADER_IN)
-            	servo[blockLoader] = ServoValue[blockLoader] + 1;
+            	servo[blockLoader] = ServoValue[blockLoader] - 3;
         } else {
             motor[leftTread] = 0;
             motor[rightTread] = 0;
