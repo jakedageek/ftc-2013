@@ -35,8 +35,6 @@
  * DEALINGS IN THE SOFTWARE.
 */
 
-#include "lib/util.h"
-
 #define DRIVE_SPEED 50
 
 task main()

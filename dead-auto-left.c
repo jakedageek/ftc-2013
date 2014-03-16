@@ -36,7 +36,7 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
-#include "lib/event.h" // I have no idea where waitForStart() is declared
+#include "JoystickDriver.c" // just for waitForStart()
 
 #define DRIVE_SPEED 100
 #define FORWARD_TIME 400
