@@ -17,11 +17,11 @@
 #pragma config(Servo,  srvo_S1_C3_6,    flagExtender,         tServoStandard)
 
 #define DRIVE_SPEED 50
-#define SEARCH_TIME 5000
-#define FIRST_HALF_DELAY 300
-#define SECOND_HALF_DELAY 200
+#define SEARCH_TIME 1500
+#define FIRST_HALF_DELAY 200
+#define SECOND_HALF_DELAY 300
 #define MIDDLE_TIME 1000
-#define TURN_90_EULER 70
+#define TURN_90_EULER 75
 
 #include "JoystickDriver.c"
 #include "autonomous.h"
@@ -29,43 +29,56 @@
 #include "block-loader.h"
 
 task main() {
+	waitForStart();
 	calibrateGyro();
 
 	{ // Drive to the IR basket, dump the block, drive back & square up against the wall
 		int timeForward;
 
 		ClearTimer(T1);
-		driveForward(DRIVE_SPEED);
+		driveBackward(DRIVE_SPEED);
 		while (true) {
-			if (time1[T1] > SEARCH_TIME)
+			if (time1[T1] > SEARCH_TIME) {
+				writeDebugStreamLine("Ran out of time, just dump the block");
 				break;
-			else if (SensorValue[irFront] == 8)
+			} else if (SensorValue[irBack] == 2)
 				break;
 		}
 
 		timeForward = time1[T1];
-		writeDebugStreamLine("Time forward: %d", timeForward);
+		writeDebugStreamLine("ir-flipper-backward-3: Sensor value: %d", SensorValue[irBack]);
+		PlaySound(soundBeepBeep);
 
 		// Keep moving to adjust for the first 2 / last 2 baskets
-		if (timeForward > MIDDLE_TIME)
-			wait1Msec(SECOND_HALF_DELAY);
-		else
-			wait1Msec(FIRST_HALF_DELAY);
-		timeForward = time1[T1];
+		if (timeForward < MIDDLE_TIME) {
+			// Back up a little
+			driveStop();
+			wait1Msec(500);
+			driveForward(FIRST_HALF_DELAY, DRIVE_SPEED);
+			timeForward -= FIRST_HALF_DELAY;
+		} else {
+			// Back up a little
+			driveStop();
+			wait1Msec(500);
+			driveForward(SECOND_HALF_DELAY, DRIVE_SPEED);
+			timeForward -= SECOND_HALF_DELAY;
+		}
 
 		driveStop();
-		servo[blockLoader] = BLOCK_LOADER_IN;
 		flipper_flip();
-		driveBackward(timeForward + 2000, DRIVE_SPEED);
+		driveForward(timeForward + 1500, DRIVE_SPEED);
+		motor[leftDrive] = -10;
+		motor[rightDrive] = DRIVE_SPEED;
+		wait1Msec(500);
+		driveStop();
 	}
 
 	{ // Drive next to the ramp & turn on to it
-		motor[leftDrive] = DRIVE_SPEED;
-		wait1Msec(950);
-		motor[rightDrive] = DRIVE_SPEED;
-		wait1Msec(1000);
+		motor[leftDrive] = -DRIVE_SPEED;
+		wait1Msec(1150);
+		motor[rightDrive] = -DRIVE_SPEED;
+		wait1Msec(1100);
 		driveStop();
-		wait1Msec(500);
 		turnRightEuler(TURN_90_EULER, DRIVE_SPEED);
 		PlaySound(soundBeepBeep);
 		driveBackward(1500, DRIVE_SPEED);

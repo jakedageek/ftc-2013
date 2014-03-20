@@ -17,7 +17,7 @@
 #pragma config(Servo,  srvo_S1_C3_6,    flagExtender,         tServoStandard)
 
 #define DRIVE_SPEED 50
-#define SEARCH_TIME 1500
+#define SEARCH_TIME 5000
 #define FIRST_HALF_DELAY 300
 #define SECOND_HALF_DELAY 200
 #define MIDDLE_TIME 1000
@@ -29,6 +29,7 @@
 #include "block-loader.h"
 
 task main() {
+	waitForStart();
 	calibrateGyro();
 
 	{ // Drive to the IR basket, dump the block, drive back & square up against the wall
@@ -44,6 +45,7 @@ task main() {
 		}
 
 		timeForward = time1[T1];
+		writeDebugStreamLine("Time forward: %d", timeForward);
 
 		// Keep moving to adjust for the first 2 / last 2 baskets
 		if (timeForward > MIDDLE_TIME)

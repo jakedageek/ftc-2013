@@ -27,6 +27,7 @@
 #include "flipper.h"
 
 task main() {
+	waitForStart();
 	calibrateGyro();
 
 	{ // Drive to the IR basket, dump the block, drive back & square up against the wall

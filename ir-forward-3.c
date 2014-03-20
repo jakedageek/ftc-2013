@@ -18,10 +18,10 @@
 
 #define DRIVE_SPEED 50
 #define SEARCH_TIME 1500
-#define FIRST_HALF_DELAY 200
-#define SECOND_HALF_DELAY 300
+#define FIRST_HALF_DELAY 300
+#define SECOND_HALF_DELAY 200
 #define MIDDLE_TIME 1000
-#define TURN_90_EULER 75
+#define TURN_90_EULER 70
 
 #include "JoystickDriver.c"
 #include "autonomous.h"
@@ -29,55 +29,43 @@
 #include "block-loader.h"
 
 task main() {
+	waitForStart();
 	calibrateGyro();
 
 	{ // Drive to the IR basket, dump the block, drive back & square up against the wall
 		int timeForward;
 
 		ClearTimer(T1);
-		driveBackward(DRIVE_SPEED);
+		driveForward(DRIVE_SPEED);
 		while (true) {
-			if (time1[T1] > SEARCH_TIME) {
-				writeDebugStreamLine("Ran out of time, just dump the block");
+			if (time1[T1] > SEARCH_TIME)
 				break;
-			} else if (SensorValue[irBack] == 2)
+			else if (SensorValue[irFront] == 8)
 				break;
 		}
 
 		timeForward = time1[T1];
-		writeDebugStreamLine("ir-flipper-backward-3: Sensor value: %d", SensorValue[irBack]);
-		PlaySound(soundBeepBeep);
 
 		// Keep moving to adjust for the first 2 / last 2 baskets
-		if (timeForward < MIDDLE_TIME) {
-			// Back up a little
-			driveStop();
-			wait1Msec(500);
-			driveForward(FIRST_HALF_DELAY, DRIVE_SPEED);
-			timeForward -= FIRST_HALF_DELAY;
-		} else {
-			// Back up a little
-			driveStop();
-			wait1Msec(500);
-			driveForward(SECOND_HALF_DELAY, DRIVE_SPEED);
-			timeForward -= SECOND_HALF_DELAY;
-		}
+		if (timeForward > MIDDLE_TIME)
+			wait1Msec(SECOND_HALF_DELAY);
+		else
+			wait1Msec(FIRST_HALF_DELAY);
+		timeForward = time1[T1];
 
 		driveStop();
+		servo[blockLoader] = BLOCK_LOADER_IN;
 		flipper_flip();
-		driveForward(timeForward + 1500, DRIVE_SPEED);
-		motor[leftDrive] = -10;
-		motor[rightDrive] = DRIVE_SPEED;
-		wait1Msec(500);
-		driveStop();
+		driveBackward(timeForward + 2000, DRIVE_SPEED);
 	}
 
 	{ // Drive next to the ramp & turn on to it
-		motor[leftDrive] = -DRIVE_SPEED;
-		wait1Msec(1150);
-		motor[rightDrive] = -DRIVE_SPEED;
-		wait1Msec(1100);
+		motor[leftDrive] = DRIVE_SPEED;
+		wait1Msec(950);
+		motor[rightDrive] = DRIVE_SPEED;
+		wait1Msec(1000);
 		driveStop();
+		wait1Msec(500);
 		turnRightEuler(TURN_90_EULER, DRIVE_SPEED);
 		PlaySound(soundBeepBeep);
 		driveBackward(1500, DRIVE_SPEED);
