@@ -35,6 +35,8 @@
  * DEALINGS IN THE SOFTWARE.
 */
 
+#include "JoystickDriver.c"
+
 #define DRIVE_SPEED 50
 
 task main()
