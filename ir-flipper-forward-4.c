@@ -13,7 +13,7 @@
 #pragma config(Servo,  srvo_S1_C3_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_4,    servo4,               tServoNone)
-#pragma config(Servo,  srvo_S1_C3_5,    servo5,               tServoNone)
+#pragma config(Servo,  srvo_S1_C3_5,    blockLoader,               tServoStandard)
 #pragma config(Servo,  srvo_S1_C3_6,    flagExtender,         tServoStandard)
 
 #define DRIVE_SPEED 50
@@ -26,6 +26,7 @@
 #include "JoystickDriver.c"
 #include "autonomous.h"
 #include "flipper.h"
+#include "block-loader.h"
 
 task main() {
 	calibrateGyro();
@@ -43,6 +44,7 @@ task main() {
 		}
 
 		timeForward = time1[T1];
+		writeDebugStreamLine("Time forward: %d", timeForward);
 
 		// Keep moving to adjust for the first 2 / last 2 baskets
 		if (timeForward > MIDDLE_TIME)
@@ -52,16 +54,18 @@ task main() {
 		timeForward = time1[T1];
 
 		driveStop();
+		servo[blockLoader] = BLOCK_LOADER_IN;
 		flipper_flip();
-		driveBackward(timeForward + 1500, DRIVE_SPEED);
+		driveBackward(timeForward + 2000, DRIVE_SPEED);
 	}
 
 	{ // Drive next to the ramp & turn on to it
 		motor[leftDrive] = DRIVE_SPEED;
 		wait1Msec(950);
 		motor[rightDrive] = DRIVE_SPEED;
-		wait1Msec(1300);
+		wait1Msec(1000);
 		driveStop();
+		wait1Msec(500);
 		turnRightEuler(TURN_90_EULER, DRIVE_SPEED);
 		PlaySound(soundBeepBeep);
 		driveBackward(1500, DRIVE_SPEED);
