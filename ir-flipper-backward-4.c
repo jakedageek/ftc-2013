@@ -26,8 +26,6 @@
 #include "autonomous.h"
 #include "flipper.h"
 
-
-// TODO: use correct sensor port (change to irBack)
 task main() {
 	calibrateGyro();
 
@@ -37,9 +35,10 @@ task main() {
 		ClearTimer(T1);
 		driveBackward(DRIVE_SPEED);
 		while (true) {
+			writeDebugStreamLine("%d", SensorValue[irBack]);
 			if (time1[T1] > SEARCH_TIME)
 				break;
-			else if (SensorValue[irFront] == 2)
+			else if (SensorValue[irBack] == 2)
 				break;
 		}
 
@@ -49,13 +48,13 @@ task main() {
 		if (timeForward < MIDDLE_TIME) {
 			// Back up a little
 			driveStop();
-			wait1Msec(500);
+			wait1Msec(1000);
 			driveForward(FIRST_HALF_DELAY, DRIVE_SPEED);
 			timeForward -= FIRST_HALF_DELAY;
 		} else {
 			// Back up a little
 			driveStop();
-			wait1Msec(500);
+			wait1Msec(1000);
 			driveForward(SECOND_HALF_BACKUP_TIME, DRIVE_SPEED);
 			timeForward -= SECOND_HALF_BACKUP_TIME;
 		}
@@ -70,9 +69,9 @@ task main() {
 
 	{ // Drive next to the ramp & turn on to it
 		motor[leftDrive] = -DRIVE_SPEED;
-		wait1Msec(1050);
+		wait1Msec(1150);
 		motor[rightDrive] = -DRIVE_SPEED;
-		wait1Msec(1300);
+		wait1Msec(1100);
 		driveStop();
 		turnRightEuler(TURN_90_EULER, DRIVE_SPEED);
 		PlaySound(soundBeepBeep);
