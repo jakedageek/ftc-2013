@@ -3,7 +3,7 @@
 
 #define FLIPPER_WAIT_TIME 1000
 #define SERVO_FLIPPER_EXTENDED 180;
-#define SERVO_FLIPPER_RETRACTED 0;
+#define SERVO_FLIPPER_RETRACTED 7;
 
 void flipper_flip();
 void flipper_extend();
