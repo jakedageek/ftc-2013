@@ -1,6 +1,6 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  HTMotor)
-#pragma config(Sensor, S2,     irLeft,         sensorHiTechnicIRSeeker600)
-#pragma config(Sensor, S3,     irRight,        sensorHiTechnicIRSeeker600)
+#pragma config(Sensor, S2,     irBack,         sensorHiTechnicIRSeeker600)
+#pragma config(Sensor, S3,     irFront,        sensorHiTechnicIRSeeker600)
 #pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
 #pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     rightDrive,    tmotorTetrix, openLoop, reversed)
@@ -38,13 +38,13 @@
 */
 
 #include "JoystickDriver.c" // I have no idea where waitForStart() is declared....
-#include "lib/gyro.h"
+#include "autonomous.h"
 
 #define DRIVE_SPEED 50
 #define TURN_SPEED 45
 #define QUARTER_TURN_TIME 800
 
-#define TURN_90 84
+#define TURN_90 70
 
 task main() {
 	waitForStart();
@@ -60,15 +60,13 @@ task main() {
 
 	// Drive forward until we get a sensor reading of 8
 	ClearTimer(T1);
-	motor[leftDrive] = DRIVE_SPEED;
-	motor[rightDrive] = DRIVE_SPEED;
+	driveForward(DRIVE_SPEED);
 	while (true) {
 		if (time1[T1] > 10000) {
-			motor[leftDrive] = 0;
-			motor[rightDrive] = 0;
+			driveStop();
 			PlaySound(soundException);
 			StopAllTasks();
-		} else if (SensorValue[irRight] == 8) {
+		} else if (SensorValue[irFront] == 8) {
 			// Stop driving forward, time to rotate
 			timeForward = time1[T1];
 			break;
@@ -79,12 +77,16 @@ task main() {
 	// On the far baskets, the IR beacon is actaully further than it should be
 	if (timeForward < 1500)
 		wait1Msec(75);
-	motor[leftDrive] = 0;
-	motor[rightDrive] = 0;
+	else {
+		driveStop();
+		wait1Msec(1000);
+		driveBackward(DRIVE_SPEED, 300);
+	}
+	driveStop();
 	writeDebugStreamLine("timeForward = %d", timeForward);
 
 	// Turn 90 degrees to the right
-	turnRightT(TURN_90, TURN_SPEED);
+	turnRightEuler(TURN_90, TURN_SPEED);
 
 	// Eject the block
 	motor[leftTread] = -60;
@@ -99,7 +101,7 @@ task main() {
 	motor[rotator] = 0;
 
 	// Turn back 90 degrees
-	turnLeftT(TURN_90, TURN_SPEED);
+	turnLeftEuler(TURN_90, TURN_SPEED);
 
 	// Drive back to the wall & square up
 	motor[leftDrive] = -DRIVE_SPEED;
@@ -119,7 +121,7 @@ task main() {
 	wait1Msec(1250);
 	motor[leftDrive] = 0;
 	motor[rightDrive] = 0;
-	turnRightT(TURN_90, TURN_SPEED);
+	turnRightEuler(TURN_90, TURN_SPEED);
 	motor[leftDrive] = -DRIVE_SPEED;
 	motor[rightDrive] = -DRIVE_SPEED;
 	wait1Msec(1500);
