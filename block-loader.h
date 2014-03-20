@@ -1,0 +1,7 @@
+#ifndef BLOCK_LOADER_H
+#define BLOCK_LOADER_H
+
+#define BLOCK_LOADER_OUT 170
+#define BLOCK_LOADER_IN 78
+
+#endif
