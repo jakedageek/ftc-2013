@@ -11,7 +11,6 @@
 
 int power = 50;
 int degrees = 90;
-bool flag = true;
 
 task main()
 {
@@ -50,7 +49,8 @@ task main()
 						break;
 					}
 				}
-				turnRightEuler(degrees, power);
+				calibrateGyro();
+				turnEuler(degrees, power, false);
 			writeDebugStreamLine("R1 for Right Turn");
 			writeDebugStreamLine("L1 for Left Turn");
 			}
@@ -84,7 +84,8 @@ task main()
 						break;
 					}
 				}
-				turnLeftEuler(degrees, power);
+				calibrateGyro();
+				turnEuler(degrees, power, true);
 			writeDebugStreamLine("R1 for Right Turn");
 			writeDebugStreamLine("L1 for Left Turn");
 			}

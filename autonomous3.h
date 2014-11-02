@@ -7,8 +7,7 @@ void driveForward(int speed);
 void driveBackward(int millis, int speed);
 void driveBackward(int speed);
 void driveStop();
-void turnRightEuler(int degrees, int speed);
-void turnLeftEuler(int degrees, int speed);
+void turnEuler(int degrees, int speed, bool left);
 int gyroValue();
 int degreeOffset(int degrees, int speed);
 
@@ -50,65 +49,148 @@ void driveStop() {
 	motor[rightDrive] = 0;
 }
 
-void turnRightEuler(int degrees, int speed) {
-	float rotated = 0;
-	float lastTime;
+void turnEuler(int degrees, int speed, bool left) {
+	float lastTime = 0;				//used for dt calculation
+	float dt = 0;							//dt for integration
+	float g_val = 0;					//gyro value in degrees per second
+	float currPos = 0;		//current turn position
+	float downPos = 0;				//decceleration point
+	float halfdeg = 0;				//half of angle target
+	int maxSpeed = speed;	//maximum speed
+	int minSpeed = 16;	//minimum speed
+	float currSpeed = 0;			//current speed
+	float accelVal = 0;			//acceleration in power/10Msec
+	float slopeTime = 600; // time to accel in Msec
+	int i;						//counters
 
-	motor[leftDrive] = speed;
-	motor[rightDrive] = -speed;
+	//define halfdeg
+	halfdeg = degrees /2 ;
+	writeDebugStreamLine("halfdeg = %d", halfdeg);
+
+	//get the motors moving
+	if(left){
+		motor[leftDrive] = (int) -minSpeed;
+		motor[rightDrive] = (int) minSpeed;
+	}else{
+		motor[leftDrive] = (int) minSpeed;
+		motor[rightDrive] = (int) -minSpeed;
+	}
+	currSpeed = minSpeed;
+
+	//define acceleration
+	accelVal = ((maxSpeed - minSpeed) / slopeTime) * 10;
+	writeDebugStreamLine("accelVal = %f", accelVal);
+
+	//acceleration
+	writeDebugStreamLine("accelerating!");
+	lastTime = nSysTime;
+	for(i=0; i < (slopeTime/10); i++){
+		g_val = gyroValue();
+		dt = nSysTime - lastTime;
+		lastTime = nSysTime;
+		currPos += (dt/1000.) * g_val;
+		writeDebugStreamLine("rotated %f", currPos);
+		if(currPos >= halfdeg){		//if the acceleration is going past half of the total angle
+			writeDebugStreamLine("breaking from accel!");
+			break;
+		}
+		currSpeed += accelVal;		//increment every time by acceleration value
+		writeDebugStreamLine("current speed = %f", currSpeed);
+		if(left){
+			motor[leftDrive] = (int) -currSpeed;
+			motor[rightDrive] = (int) currSpeed;
+		}else{
+			motor[leftDrive] = (int) currSpeed;
+			motor[rightDrive] = (int)-currSpeed;
+		}
+
+		wait1Msec(10 - dt);		//always 10 Msec delay
+	}
+	//calculate when it needs to setart deccelerating
+	downPos = degrees - (30);
+	writeDebugStreamLine("downPos = %d", downPos);
+
+	//constant speed
+	if(left){
+		motor[leftDrive] = (int) -maxSpeed;
+		motor[rightDrive] = (int) maxSpeed;
+	}else{
+		motor[leftDrive] = (int) maxSpeed;
+		motor[rightDrive] = (int) -maxSpeed;
+	}
 
 	lastTime = nSysTime;
-
-	while (abs(rotated) < degrees) {
-		float g_val = gyroValue();
-		float dt = nSysTime - lastTime;
+	while(true){
+		g_val = gyroValue();
+		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
-		rotated += (dt/1000.) * g_val;
-		writeDebugStreamLine("rotated %f", rotated);
-		writeDebugStreamLine("time %f", dt);
-		writeDebugStreamLine("gval %f", g_val);
-		wait1Msec(4);
+		currPos += (dt/1000.) * g_val;
+		if(currPos >= downPos){
+			break;
+		}
+		wait1Msec(10 - dt);
 	}
-	writeDebugStreamLine("-----------------------");
-	driveStop();
-}
-
-void turnLeftEuler(int degrees, int speed) {
-	float rotated = 0;
-	float lastTime;
-	int i;
-
-	motor[leftDrive] = -speed;
-	motor[rightDrive] = speed;
-
+	writeDebugStreamLine("deccelerating!");
+	//decceleration
 	lastTime = nSysTime;
+	for(i=0; i < (slopeTime/10); i++){
+		g_val = gyroValue();
+		dt = nSysTime - lastTime;
+		lastTime = nSysTime;
+		currPos += (dt/1000.) * g_val;
+		writeDebugStreamLine("rotated %f", currPos);
+		currSpeed -= (accelVal * 3.5);		//increment every time by acceleration value
+		writeDebugStreamLine("currSpeed %f", currSpeed);
 
-	while (abs(rotated) < degrees) {
-		float g_val = gyroValue();
-		float dt = nSysTime - lastTime;
-		lastTime = nSysTime;
-		rotated += (dt/1000.) * g_val;
-		writeDebugStreamLine("rotated %f", rotated);
-		writeDebugStreamLine("time %f", dt);
-		writeDebugStreamLine("gval %f", g_val);
-		wait1Msec(4);
+		//if speed is incremented below the minimum speed
+		if(currSpeed < minSpeed){
+			currSpeed = minSpeed;
+		}
+
+		//if position goes past the speed target
+		if(currPos >= (degrees-5)){
+			writeDebugStreamLine("stopping!");
+			if(left){
+				motor[leftDrive] = 5;
+				motor[rightDrive] = -5;
+			}else{
+				motor[leftDrive] = -5;
+				motor[rightDrive] = 5;
+			}
+			wait1Msec(10);
+			driveStop();
+			break;
+		}
+
+		if(left){
+			motor[leftDrive] = (int) -currSpeed;
+			motor[rightDrive] = (int) currSpeed;
+		}else{
+			motor[leftDrive] = (int) currSpeed;
+			motor[rightDrive] = (int) -currSpeed;
+		}
+
+		if(i == (slopeTime/10)-1 && currPos < degrees)
+			i -= 1;
+
+		wait1Msec(10 - dt);		//always 10 Msec delay
 	}
-	writeDebugStreamLine("-----------------------");
-	driveStop();
-	for(i = 0; i < 100; i++){
-		float g_val = gyroValue();
-		float dt = nSysTime - lastTime;
+	writeDebugStreamLine("Overturning:");
+	lastTime = nSysTime;
+	for(i=0; i < 30; i++) {
+		g_val = gyroValue();
+		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
-		rotated += (dt/1000.) * g_val;
-		writeDebugStreamLine("rotated %f", rotated);
-		writeDebugStreamLine("time %f", dt);
-		writeDebugStreamLine("gval %f", g_val);
-		wait1Msec(4);
+		currPos += (dt/1000.) * g_val;
+		writeDebugStreamLine("rotated %f", currPos);
+		wait1Msec(10 - dt);
 	}
+	writeDebugStreamLine("done.");
+	writeDebugStreamLine("----------------------------");
 }
 
 int gyroValue() {
-	return SensorValue[gyro] - gyro_zero;
+	return abs(SensorValue[gyro] - gyro_zero);
 }
 
 int degreeOffset(int degrees, int speed){
