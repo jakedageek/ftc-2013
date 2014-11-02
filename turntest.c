@@ -9,39 +9,85 @@
 #include "autonomous3.h"
 #include "util.h"
 
+int power = 50;
+int degrees = 90;
 bool flag = true;
 
 task main()
 {
-	/*
-	while(true){
-		if (joy1Btn(CONTROLLER_L1)){
-			turnLeftEuler(90, 100);
-		}
-		else if(joy1Btn(CONTROLLER_R1)){
-			turnRightEuler(90, 100);
-		}
-	}
-	*/
-	float rotated = 0;
-	float lastTime;
-	int speed = 25;
-	int degrees = 35;
 	calibrateGyro();
-	motor[leftDrive] = -speed;
-	motor[rightDrive] = speed;
-
-	lastTime = nSysTime;
-
-	while (abs(rotated) < degrees) {
-		float g_val = gyroValue();
-		float dt = nSysTime - lastTime;
-		lastTime = nSysTime;
-		rotated += (dt/1000) * g_val;
-		writeDebugStreamLine("rotated %f", rotated);
-		writeDebugStreamLine("time %f", dt);
-		writeDebugStreamLine("gval %f", g_val);
+	while(true){
+		writeDebugStreamLine("R1 for Right Turn");
+		writeDebugStreamLine("L1 for Left Turn");
+		while(true){
+			if(joy1Btn(CONTROLLER_R1)){
+				writeDebugStreamLine("R1, L1 for Power");
+				writeDebugStreamLine("R2, L2 for Degrees");
+				writeDebugStreamLine("A to confirm");
+				while(true){
+					if(joy1Btn(CONTROLLER_R1)){
+						power += 5;
+						writeDebugStreamLine("power = %d", power);
+						wait1Msec(500);
+					}
+					if(joy1Btn(CONTROLLER_R2)){
+						degrees += 5;
+						writeDebugStreamLine("degrees = %d", degrees);
+					 	wait1Msec(500);
+					}
+					if(joy1Btn(CONTROLLER_L1)){
+						power -= 5;
+						writeDebugStreamLine("power = %d", power);
+						wait1Msec(500);
+					}
+					if(joy1Btn(CONTROLLER_L2)){
+						degrees -= 5;
+						writeDebugStreamLine("degrees = %d", degrees);
+						wait1Msec(500);
+					}
+					if(joy1Btn(CONTROLLER_A)){
+						wait1Msec(500);
+						break;
+					}
+				}
+				turnRightEuler(degrees, power);
+			writeDebugStreamLine("R1 for Right Turn");
+			writeDebugStreamLine("L1 for Left Turn");
+			}
+			if(joy1Btn(CONTROLLER_L1)){
+				writeDebugStreamLine("R1, L1 for Power");
+				writeDebugStreamLine("R2, L2 for Degrees");
+				writeDebugStreamLine("A to confirm");
+				while(true){
+					if(joy1Btn(CONTROLLER_R1)){
+						power += 5;
+						writeDebugStreamLine("power = %d", power);
+						wait1Msec(500);
+					}
+					if(joy1Btn(CONTROLLER_R2)){
+						degrees += 5;
+						writeDebugStreamLine("degrees = %d", degrees);
+						wait1Msec(500);
+					}
+					if(joy1Btn(CONTROLLER_L1)){
+						power -= 5;
+						writeDebugStreamLine("power = %d", power);
+						wait1Msec(500);
+					}
+					if(joy1Btn(CONTROLLER_L2)){
+						degrees -= 5;
+						writeDebugStreamLine("degrees = %d", degrees);
+						wait1Msec(500);
+					}
+					if(joy1Btn(CONTROLLER_A)){
+						wait1Msec(500);
+						break;
+					}
+				}
+				turnLeftEuler(degrees, power);
+			writeDebugStreamLine("R1 for Right Turn");
+			writeDebugStreamLine("L1 for Left Turn");
+			}
+		}
 	}
-	writeDebugStreamLine("-----------------------");
-	driveStop();
 }

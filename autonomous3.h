@@ -10,6 +10,7 @@ void driveStop();
 void turnRightEuler(int degrees, int speed);
 void turnLeftEuler(int degrees, int speed);
 int gyroValue();
+int degreeOffset(int degrees, int speed);
 
 int gyro_zero;
 
@@ -51,28 +52,31 @@ void driveStop() {
 
 void turnRightEuler(int degrees, int speed) {
 	float rotated = 0;
-	int lastTime;
+	float lastTime;
 
 	motor[leftDrive] = speed;
 	motor[rightDrive] = -speed;
 
-
 	lastTime = nSysTime;
 
 	while (abs(rotated) < degrees) {
-		int g_val = gyroValue();
-		int dt = nSysTime - lastTime;
+		float g_val = gyroValue();
+		float dt = nSysTime - lastTime;
 		lastTime = nSysTime;
-
-		rotated += (float) dt / 1000.0 * (float) g_val;
+		rotated += (dt/1000.) * g_val;
+		writeDebugStreamLine("rotated %f", rotated);
+		writeDebugStreamLine("time %f", dt);
+		writeDebugStreamLine("gval %f", g_val);
+		wait1Msec(4);
 	}
-
+	writeDebugStreamLine("-----------------------");
 	driveStop();
 }
 
 void turnLeftEuler(int degrees, int speed) {
 	float rotated = 0;
-	int lastTime;
+	float lastTime;
+	int i;
 
 	motor[leftDrive] = -speed;
 	motor[rightDrive] = speed;
@@ -80,18 +84,36 @@ void turnLeftEuler(int degrees, int speed) {
 	lastTime = nSysTime;
 
 	while (abs(rotated) < degrees) {
-		int g_val = gyroValue();
-		int dt = nSysTime - lastTime;
+		float g_val = gyroValue();
+		float dt = nSysTime - lastTime;
 		lastTime = nSysTime;
-
-		rotated += (float) dt / 1000.0 * (float) g_val;
+		rotated += (dt/1000.) * g_val;
+		writeDebugStreamLine("rotated %f", rotated);
+		writeDebugStreamLine("time %f", dt);
+		writeDebugStreamLine("gval %f", g_val);
+		wait1Msec(4);
 	}
-
+	writeDebugStreamLine("-----------------------");
 	driveStop();
+	for(i = 0; i < 100; i++){
+		float g_val = gyroValue();
+		float dt = nSysTime - lastTime;
+		lastTime = nSysTime;
+		rotated += (dt/1000.) * g_val;
+		writeDebugStreamLine("rotated %f", rotated);
+		writeDebugStreamLine("time %f", dt);
+		writeDebugStreamLine("gval %f", g_val);
+		wait1Msec(4);
+	}
 }
 
 int gyroValue() {
 	return SensorValue[gyro] - gyro_zero;
+}
+
+int degreeOffset(int degrees, int speed){
+	degrees -= 5 * ((degrees-20) / 10 );
+	return degrees;
 }
 
 #endif
