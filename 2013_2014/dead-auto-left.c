@@ -36,6 +36,8 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
+//AUTONOMOUS FILE FROM 2013-2014
+
 #include "JoystickDriver.c" // just for waitForStart()
 
 #define DRIVE_SPEED 100
@@ -66,7 +68,7 @@ task main() {
 	motor[rightTread] = 0;
 
 	// Dumb turn onto the platform
-	motor[leftDrive] = -DRIVE_SPEED;
+	motor[rightDrive] = -DRIVE_SPEED;
 	wait1Msec(TURN_TIME);
 	motor[leftDrive] = -DRIVE_SPEED;
 	motor[rightDrive] = -DRIVE_SPEED;

@@ -13,6 +13,30 @@ int degreeOffset(int degrees, int speed);
 
 int gyro_zero;
 
+/*
+Copyright (c) 2014 Jake Lee, AJ Stubbard, Team 4790
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+
+//gyroscope calibration - run before use
 void calibrateGyro() {
 	gyro_zero = 0;
 
@@ -25,6 +49,7 @@ void calibrateGyro() {
 	writeDebugStreamLine("%d", gyro_zero);
 }
 
+//self-explanatory - for use in autonomous
 void driveForward(int millis, int speed) {
 	driveForward(speed);
 	wait1Msec(millis);
@@ -49,21 +74,22 @@ void driveStop() {
 	motor[rightDrive] = 0;
 }
 
-void turnEuler(int degrees, int speed, bool left) {
+//Gyroscope turn function
+void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed in %, left (true), right (false)
 	float lastTime = 0;				//used for dt calculation
-	float dt = 0;							//dt for integration
-	float g_val = 0;					//gyro value in degrees per second
-	float currPos = 0;		//current turn position
+	float dt = 0;					//dt for integration
+	float g_val = 0;				//gyro value in degrees per second
+	float currPos = 0;				//current turn position
 	float downPos = 0;				//decceleration point
 	float halfdeg = 0;				//half of angle target
-	int maxSpeed = speed;	//maximum speed
-	int minSpeed = 16;	//minimum speed
+	int maxSpeed = speed;			//maximum speed
+	int minSpeed = 16;				//minimum speed
 	float currSpeed = 0;			//current speed
-	float accelVal = 0;			//acceleration in power/10Msec
-	float slopeTime = 600; // time to accel in Msec
-	int i;						//counters
+	float accelVal = 0;				//acceleration in power/10Msec
+	float slopeTime = 600; 			// time to accel in Msec
+	int i;							//counters
 
-	//define halfdeg
+	//define halfdeg for cutting of acceleration
 	halfdeg = degrees /2 ;
 	writeDebugStreamLine("halfdeg = %d", halfdeg);
 
@@ -77,7 +103,7 @@ void turnEuler(int degrees, int speed, bool left) {
 	}
 	currSpeed = minSpeed;
 
-	//define acceleration
+	//define acceleration rate
 	accelVal = ((maxSpeed - minSpeed) / slopeTime) * 10;
 	writeDebugStreamLine("accelVal = %f", accelVal);
 
@@ -85,12 +111,14 @@ void turnEuler(int degrees, int speed, bool left) {
 	writeDebugStreamLine("accelerating!");
 	lastTime = nSysTime;
 	for(i=0; i < (slopeTime/10); i++){
+		//integration start
 		g_val = gyroValue();
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
 		currPos += (dt/1000.) * g_val;
+		//integration end
 		writeDebugStreamLine("rotated %f", currPos);
-		if(currPos >= halfdeg){		//if the acceleration is going past half of the total angle
+		if(currPos >= halfdeg){		//if the acceleration is going past half of the total angle, break and go into decceleration
 			writeDebugStreamLine("breaking from accel!");
 			break;
 		}
@@ -104,13 +132,14 @@ void turnEuler(int degrees, int speed, bool left) {
 			motor[rightDrive] = (int)-currSpeed;
 		}
 
-		wait1Msec(10 - dt);		//always 10 Msec delay
+		wait1Msec(10 - dt);		//always 10 Msec delay, despite changes in dt
 	}
+
 	//calculate when it needs to setart deccelerating
 	downPos = degrees - (30);
 	writeDebugStreamLine("downPos = %d", downPos);
 
-	//constant speed
+	//constant max speed
 	if(left){
 		motor[leftDrive] = (int) -maxSpeed;
 		motor[rightDrive] = (int) maxSpeed;
@@ -119,37 +148,44 @@ void turnEuler(int degrees, int speed, bool left) {
 		motor[rightDrive] = (int) -maxSpeed;
 	}
 
+	//keep integrating until we reach downPos
 	lastTime = nSysTime;
 	while(true){
+		//integration start
 		g_val = gyroValue();
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
 		currPos += (dt/1000.) * g_val;
+		//integration end
 		if(currPos >= downPos){
 			break;
 		}
 		wait1Msec(10 - dt);
 	}
+
 	writeDebugStreamLine("deccelerating!");
 	//decceleration
 	lastTime = nSysTime;
 	for(i=0; i < (slopeTime/10); i++){
+		//integration start
 		g_val = gyroValue();
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
 		currPos += (dt/1000.) * g_val;
+		//integration end
 		writeDebugStreamLine("rotated %f", currPos);
 		currSpeed -= (accelVal * 3.5);		//increment every time by acceleration value
 		writeDebugStreamLine("currSpeed %f", currSpeed);
 
-		//if speed is incremented below the minimum speed
+		//if speed is incremented below the minimum speed, reset to min speed
 		if(currSpeed < minSpeed){
 			currSpeed = minSpeed;
 		}
 
-		//if position goes past the speed target
+		//if position goes past the target, stop
 		if(currPos >= (degrees-5)){
 			writeDebugStreamLine("stopping!");
+			//turn the motors the opposite direction to prevent coasting
 			if(left){
 				motor[leftDrive] = 5;
 				motor[rightDrive] = -5;
@@ -175,6 +211,8 @@ void turnEuler(int degrees, int speed, bool left) {
 
 		wait1Msec(10 - dt);		//always 10 Msec delay
 	}
+
+	//debug code to measure overturns
 	writeDebugStreamLine("Overturning:");
 	lastTime = nSysTime;
 	for(i=0; i < 30; i++) {

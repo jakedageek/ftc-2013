@@ -1,9 +1,12 @@
-ftc-2013
-========
+#ifndef FLIPPER_H
+#define FLIPPER_H
 
-Team 4790's FTC Code Repository
+#define FLIPPER_WAIT_TIME 1000
+#define SERVO_FLIPPER_EXTENDED 180;
+#define SERVO_FLIPPER_RETRACTED 7;
 
-Copyright (c) 2014 Jake Lee, AJ Stubbard, Team 4790
+/*
+Copyright (c) 2014 AJ Stubbard, Team 4790
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,3 +25,31 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+*/
+
+//HEADER FILE FROM 2013-2014
+
+void flipper_flip();
+void flipper_extend();
+void flipper_wait();
+void flipper_retract();
+
+void flipper_flip() {
+	flipper_extend();
+	flipper_wait();
+	flipper_retract();
+}
+
+void flipper_extend() {
+	servo[flipper] = SERVO_FLIPPER_EXTENDED;
+}
+
+void flipper_wait() {
+	wait1Msec(FLIPPER_WAIT_TIME);
+}
+
+void flipper_retract() {
+	servo[flipper] = SERVO_FLIPPER_RETRACTED;
+}
+
+#endif
