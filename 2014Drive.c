@@ -16,21 +16,30 @@
 
 #include "util.h"
 #include "event.h"
-#include "block-loader.h"
-
+#include "lift.h"
 
 task main()
 {
 	waitForStart();
+	nMotorEncoder[liftLeft] = 0;
+	nMotorEncoder[liftRight] = 0;   
 
 	while(true){
-		// Drive controls
-    motor[driveLeft1] = joystickValue(1, 1, 2);
-    motor[driveLeft2] = joystickValue(1, 1, 2);
-    motor[driveRight1] = joystickValue(1, 2, 2);
-    motor[driveRight2] = joystickValue(1, 2, 2);
+	// Drive controls
+    motor[driveLeft] = joystickValue(1, 1, 2);
+    motor[driveRight] = joystickValue(1, 2, 2);
 
     // Lift controls
+    if (joy1Btn(CONTROLLER_A)) {
+        // reset
+        motor[liftLeft] = LIFT_DOWN;
+        motor[liftRight] = LIFT_DOWN;
+    } else if (joy1Btn(CONTROLLER_B)) {
+        // Push out
+        motor[leftTread] = 0;
+        motor[rightTread] = 0;
+    }
+
 
 
 }
