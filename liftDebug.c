@@ -18,49 +18,40 @@
 
 #include "util.h"
 #include "lift.h"
-#include "autonomous3.h"
-
-//TOWER AUTONOMOUS
-int sonarvalue = 0;
-void autoStraight();
-
-//if the end goal is straight ahead
-void autoStraight(){
-	while (SensorValue[Sonar] > 15){
-		motor[leftDrive] = 20;
-		motor[rightDrive] = 20;
-	}
-	motor[leftDrive] = 0;
-	motor[rightDrive]= 0;
-}
-
-void initializeRobot(){
-	calibrateGyro();
-
-	//RESET SERVOS
-
-	return;
-}
 
 task main()
 {
-	initializeRobot();
-	waitForStart();
+	nMotorEncoder[liftLeft] = 0;
+	nMotorEncoder[liftRight] = 0;
+		servo[hookLeft] = 182;
+		servo[hookRight] = 79;
 	while(true){
-		sonarvalue = SensorValue[Sonar];
-		if(sonarvalue == 255){
-			//Diagonal center console
-			//The ultrasonic sensor cannot detect diagonal surfaces - therefore, it returns 255 as its default value.
-			nxtDisplayCenteredTextLine(3, "Diagonal, %d", sonarvalue);
-		}else if(SensorValue[Sonar] < 105){
-			//goal is straight ahead
-			nxtDisplayCenteredTextLine(3, "Ahead, %d", sonarvalue);
-			autoStraight();
-			break;
+		if(joy1Btn(CONTROLLER_R1)){
+			motor[liftLeft] = 100;
+			motor[liftRight] = 100;
+		}else if(joy1Btn(CONTROLLER_R2)){
+			motor[liftLeft] = -20;
+			motor[liftRight] = -20;
 		}else{
-			//goal is sideways
-			nxtDisplayCenteredTextLine(3, "Sideways, %d", sonarvalue);
+			motor[liftLeft] = 0;
+			motor[liftRight] = 0;
 		}
+		if(joy1Btn(CONTROLLER_A)){
+			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
+			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
+			wait10Msec(100);
+		}
+
+		if(joy1Btn(CONTROLLER_B)){
+			writeDebugStreamLine("BUTTONB");
+			equalize();
+		}
+    //Gate Controls
+    if(joy1Btn(CONTROLLER_L1)){
+        gate(true);
+    }else if(joy1Btn(CONTROLLER_L2)){
+        gate(false);
+    }
+
 	}
-	PlaySoundFile("attention.rso");
 }

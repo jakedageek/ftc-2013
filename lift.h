@@ -7,12 +7,10 @@
 #define NINETY_LIFT 3 	//calibrate
 #define GOAL_LIFT 4 	//calibrate
 #define LIFT_UP 100 	//calibrate
-#define LIFT_DOWN -50 	//calibrate
-#define LIFT_TRIM 20  	//calibrate
+#define LIFT_DOWN -20 	//calibrate
+#define LIFT_TRIM 40  	//calibrate
 #define GATE_OPEN 40 		//calibrate
 #define GATE_CLOSE 60 	//calibrate
-#define HOOK_DOWN 40 	//calibrate
-#define HOOK_UP 60		//calibrate
 
 int temp;
 
@@ -20,13 +18,12 @@ void liftMove(int target, bool up);
 void equalize();
 void trimLeft(bool up);
 void trimRight(bool up);
-void gate(bool open);
 void hook(bool up);
 
 void liftMove(int target, bool up){
 	//if the lift is moving UP
 	if(up){
-		while(nMotorEncoder[liftLeft] < target){
+		while(nMotorEncoder[liftLeft] < target && nMotorEncoder[liftRight] < target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
 			motor[liftLeft] = LIFT_UP;
@@ -36,7 +33,7 @@ void liftMove(int target, bool up){
 		motor[liftRight] = 0;
 		equalize();
 	}else{ 				//if the lift is moving DOWN
-		while(nMotorEncoder[liftLeft] > target){
+		while(nMotorEncoder[liftLeft] > target && nMotorEncoder[liftRight] > target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
 			motor[liftLeft] = LIFT_DOWN;
@@ -51,16 +48,19 @@ void liftMove(int target, bool up){
 
 void equalize(){
 	//If two lifts are at different heights, match the heights
+	writeDebugStreamLine("EQUALIZE");
 	if(nMotorEncoder[liftLeft] > nMotorEncoder[liftRight]){
+		writeDebugStream("Left > Right");
 		while(nMotorEncoder[liftRight] > nMotorEncoder[liftLeft]){
-			motor[liftLeft] = LIFT_TRIM;
+			motor[liftLeft] = 50;
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
 		}
 		motor[liftLeft] = 0;
-	}else if(nMotorEncoder[liftLeft] < nMotorEncoder[liftLeft]){
-		while(nMotorEncoder[liftLeft] < nMotorEncoder[liftLeft]){
-			motor[liftRight] = LIFT_TRIM;
+	}else if(nMotorEncoder[liftLeft] < nMotorEncoder[liftRight]){
+		writeDebugStream("Right > Left");
+		while(nMotorEncoder[liftLeft] < nMotorEncoder[liftRight]){
+			motor[liftRight] = 50;
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
 		}
@@ -106,21 +106,13 @@ void trimRight(bool up){
 	}
 }
 
-void gate(bool open){
-	if(open){
-		servo[servoGate] = GATE_OPEN;
-	}else{
-		servo[servoGate] = GATE_CLOSE;
-	}
-}
-
 void hook(bool up){
 	if(up){
-		servo[hookLeft] = HOOK_UP;
-		servo[hookRight] = HOOK_UP;
+		servo[hookLeft] = 182;
+		servo[hookRight] = 79;
 	}else{
-		servo[hookLeft] = HOOK_DOWN;
-		servo[hookLeft] = HOOK_DOWN;
+		servo[hookLeft] = 230;
+		servo[hookRight] = 34;
 	}
 }
 
