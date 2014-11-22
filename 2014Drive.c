@@ -87,22 +87,22 @@ task main(){
 				}
 
         //hook controls
-		    if(joy1Btn(CONTROLLER_L1)){
+		    if(joystick.joy1_TopHat == 0){
 		        hook(true);
-		    }else if(joy1Btn(CONTROLLER_L2)){
+		    }else if(joystick.joy1_TopHat == 4){
 		        hook(false);
 		    }
 
 		    //gate controls
-		    if(joy1Btn(CONTROLLER_A)){
+		    if(joy2Btn(CONTROLLER_R1)){
 		        servo[gateFront] = 0;
-		    }else if(joy1Btn(CONTROLLER_B)){
+		    }else if(joy2Btn(CONTROLLER_R2)){
 		        servo[gateFront] = 255;
 		    }
 
-		    if(joy1Btn(CONTROLLER_X)){
+		    if(joy2Btn(CONTROLLER_L1)){
 		        servo[gateBack] = 255;
-		    }else if(joy1Btn(CONTROLLER_Y)){
+		    }else if(joy2Btn(CONTROLLER_L2)){
 		        servo[gateBack] = 0;
 		    }
 
