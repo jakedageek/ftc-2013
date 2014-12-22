@@ -2,14 +2,14 @@
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     Sonar,          sensorSONAR)
 #pragma config(Sensor, S3,     gyro,           sensorI2CHiTechnicGyro)
-#pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C1_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C3_1,     rightDrive,    tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C3_2,     liftRight,     tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C1_1,     rightDrive,    tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_2,     liftLeft,      tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C3_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
+#pragma config(Motor,  mtr_S1_C3_2,     liftRight,     tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C4_1,     intake,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C2_1,    servoGate,            tServoStandard)
-#pragma config(Servo,  srvo_S1_C2_2,    servoGate2,           tServoStandard)
+#pragma config(Servo,  srvo_S1_C2_1,    gateFront,            tServoStandard)
+#pragma config(Servo,  srvo_S1_C2_2,    gateBack,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_3,    hookLeft,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_4,    hookRight,            tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_5,    servo5,               tServoNone)
@@ -23,10 +23,13 @@
 //RAMP AUTONOMOUS
 
 void initializeRobot(){
-	calibrateGyro();
-
-	//RESET SERVOS
-
+	nMotorEncoder[liftLeft] = 0;
+	nMotorEncoder[liftRight] = 0;
+	servo[hookLeft] = 182;
+	servo[hookRight] = 79;
+	servo[gateFront] = 0;
+	servo[gateBack] = 255;
+	hook(true);
 	return;
 }
 
@@ -35,20 +38,19 @@ task main(){
 	waitForStart();
 
 	//drive backwards off the ramp
-	driveBackward(800, 50);
+	driveBackward(2500, 20);
 	//keep driving
-	driveBackward(1000);
-	//stop infront of the tube
-	driveStop();
+	//driveBackward(1000);
+	//stop infront of the tube67
+	//driveStop();
 	//hook the tube
-	hook(false);
+	//hook(false);
 	//raise the arm
-	liftMove(SIXTY_LIFT, true);
+	//liftMove(SIXTY_LIFT, true);
 	//open the gate
-	gate(true);
 	//turn
-	turnEuler(45, 35, false);
+	//turnEuler(35, 35, false);
 	//drive forward to the goal
-	driveForward(4000);
+	//driveForward(4000);
 
 }

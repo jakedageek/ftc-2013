@@ -2,12 +2,12 @@
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     Sonar,          sensorSONAR)
 #pragma config(Sensor, S3,     gyro,           sensorI2CHiTechnicGyro)
-#pragma config(Motor,  mtr_S1_C1_1,     rightDrive,    tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C1_2,     liftLeft,      tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C3_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C3_2,     liftRight,     tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C4_1,     intake,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_1,     intake,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_2,     motorI,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop)
 #pragma config(Servo,  srvo_S1_C2_1,    gateFront,            tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_2,    gateBack,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_3,    hookLeft,             tServoStandard)
@@ -70,10 +70,10 @@ task main(){
         */
 
         //temp lift controls
-        if(joy1Btn(CONTROLLER_R1)){
+        if(joystick.joy2_TopHat == 0){
 					motor[liftLeft] = 100;
 					motor[liftRight] = 100;
-				}else if(joy1Btn(CONTROLLER_R2)){
+				}else if(joystick.joy2_TopHat == 4){
 					//if(	nMotorEncoder[liftLeft] < 45 || nMotorEncoder[liftRight] < 45){ //bottom limit
 					//	motor[liftLeft] = 0;
 					//	motor[liftRight] = 0;
@@ -87,16 +87,16 @@ task main(){
 				}
 
         //hook controls
-		    if(joystick.joy1_TopHat == 0){
+		    if(joy1Btn(CONTROLLER_R1)){
 		        hook(true);
-		    }else if(joystick.joy1_TopHat == 4){
+		    }else if(joy1Btn(CONTROLLER_R2)){
 		        hook(false);
 		    }
 
 		    //gate controls
 		    if(joy2Btn(CONTROLLER_R1)){
 		        servo[gateFront] = 0;
-		    }else if(joy2Btn(CONTROLLER_R2)){
+		    }else /*if(joy2Btn(CONTROLLER_R2))*/{
 		        servo[gateFront] = 255;
 		    }
 

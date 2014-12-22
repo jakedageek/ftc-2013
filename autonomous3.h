@@ -9,7 +9,6 @@ void driveBackward(int speed);
 void driveStop();
 void turnEuler(int degrees, int speed, bool left);
 int gyroValue();
-int degreeOffset(int degrees, int speed);
 
 int gyro_zero;
 
@@ -83,7 +82,7 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 	float downPos = 0;				//decceleration point
 	float halfdeg = 0;				//half of angle target
 	int maxSpeed = speed;			//maximum speed
-	int minSpeed = 16;				//minimum speed
+	int minSpeed = 25;				//minimum speed
 	float currSpeed = 0;			//current speed
 	float accelVal = 0;				//acceleration in power/10Msec
 	float slopeTime = 600; 			// time to accel in Msec
@@ -183,7 +182,7 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 		}
 
 		//if position goes past the target, stop
-		if(currPos >= (degrees-5)){
+		if(currPos >= (degrees - (maxSpeed/20))){
 			writeDebugStreamLine("stopping!");
 			//turn the motors the opposite direction to prevent coasting
 			if(left){
@@ -231,9 +230,6 @@ int gyroValue() {
 	return abs(SensorValue[gyro] - gyro_zero);
 }
 
-int degreeOffset(int degrees, int speed){
-	degrees -= 5 * ((degrees-20) / 10 );
-	return degrees;
-}
+
 
 #endif

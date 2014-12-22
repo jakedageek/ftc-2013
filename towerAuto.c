@@ -3,13 +3,13 @@
 #pragma config(Sensor, S2,     Sonar,          sensorSONAR)
 #pragma config(Sensor, S3,     gyro,           sensorI2CHiTechnicGyro)
 #pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C1_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C3_1,     rightDrive,    tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C3_2,     liftRight,     tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C4_1,     intake,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C2_1,    servoGate,            tServoStandard)
-#pragma config(Servo,  srvo_S1_C2_2,    servoGate2,           tServoStandard)
+#pragma config(Motor,  mtr_S1_C1_2,     liftLeft,      tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C3_1,     intake,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_2,     motorI,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop)
+#pragma config(Servo,  srvo_S1_C2_1,    gateFront,            tServoStandard)
+#pragma config(Servo,  srvo_S1_C2_2,    gateBack,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_3,    hookLeft,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_4,    hookRight,            tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_5,    servo5,               tServoNone)
@@ -23,16 +23,48 @@
 //TOWER AUTONOMOUS
 int sonarvalue = 0;
 void autoStraight();
+void autoDiag();
 
 //if the end goal is straight ahead
 void autoStraight(){
-	while (SensorValue[Sonar] > 15){
-		motor[leftDrive] = 20;
-		motor[rightDrive] = 20;
+	int a = 0;
+	while (true){
+		writeDebugStreamLine("%d",SensorValue[Sonar]);
+		motor[leftDrive] = -20;
+		motor[rightDrive] = -20;
+		if(SensorValue[Sonar] < 30){
+			a ++;
+		}
+		if(a > 7){
+			motor[leftDrive] = 0;
+			motor[rightDrive]= 0;
+			break;
+		}
 	}
-	motor[leftDrive] = 0;
-	motor[rightDrive]= 0;
+	return;
 }
+
+void autoDiag(){
+	driveBackward(2000, 20);
+	turnEuler(90,70,true);
+	driveBackward(2200, 20);
+	turnEuler(135,70,false);
+	driveBackward(1400, 20);
+	wait1Msec(5000);
+	driveForward(700, 20);
+	turnEuler(90,70,false);
+	driveBackward(1300, 20);
+	turnEuler(90,70,true);
+	driveBackward(1500,40);
+	return;
+}
+
+void autoDiagR(){
+	turnEuler(135, 70, false);
+	driveBackward(3000, 20);
+	return;
+}
+
 
 void initializeRobot(){
 	calibrateGyro();
@@ -44,22 +76,42 @@ void initializeRobot(){
 
 task main()
 {
+	int i = 0;
+	int j = 0;
+	int k = 0;
 	initializeRobot();
-	waitForStart();
+	//waitForStart();
 	while(true){
 		sonarvalue = SensorValue[Sonar];
+		writeDebugStreamLine("%d", sonarvalue);
 		if(sonarvalue == 255){
 			//Diagonal center console
+			i++;
+			if(i > 5){
+				nxtDisplayCenteredTextLine(3, "Diagonal, %d", sonarvalue);
+				autoDiag();
+				wait1Msec(2000);
+				autoDiagR();
+				break;
+			}
 			//The ultrasonic sensor cannot detect diagonal surfaces - therefore, it returns 255 as its default value.
-			nxtDisplayCenteredTextLine(3, "Diagonal, %d", sonarvalue);
-		}else if(SensorValue[Sonar] < 105){
+
+		}else if(SensorValue[Sonar] < 115){
 			//goal is straight ahead
-			nxtDisplayCenteredTextLine(3, "Ahead, %d", sonarvalue);
-			autoStraight();
-			break;
+			j++;
+			writeDebugStreamLine("%d", j);
+			if(j > 5){
+				nxtDisplayCenteredTextLine(3, "Ahead, %d", sonarvalue);
+				autoStraight();
+				break;
+			}
 		}else{
 			//goal is sideways
-			nxtDisplayCenteredTextLine(3, "Sideways, %d", sonarvalue);
+			k++;
+			if(k > 5){
+				nxtDisplayCenteredTextLine(3, "Sideways, %d", sonarvalue);
+				break;
+			}
 		}
 	}
 	PlaySoundFile("attention.rso");
