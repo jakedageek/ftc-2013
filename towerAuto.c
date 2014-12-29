@@ -19,6 +19,7 @@
 #include "util.h"
 #include "lift.h"
 #include "autonomous3.h"
+#include "drivers/hitechnic-angle.h"
 
 //TOWER AUTONOMOUS
 int sonarvalue = 0;

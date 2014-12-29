@@ -9,8 +9,9 @@ void driveBackward(int speed);
 void driveStop();
 void turnEuler(int degrees, int speed, bool left);
 int gyroValue();
-
 int gyro_zero;
+
+#include "drivers/hitechnic-angle.h"
 
 /*
 Copyright (c) 2014 Jake Lee, AJ Stubbard, Team 4790
