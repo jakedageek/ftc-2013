@@ -19,16 +19,16 @@
 #include "util.h"
 #include "lift.h"
 #include "autonomous3.h"
-#include "drivers/hitechnic-angle.h"
+#include "hitechnic-angle.h"
 
 task main()
 {
 	HTANGresetAccumulatedAngle(HTANG);
-	while(true){
-		if(joy1Btn(CONTROLLER_A)){
-			HTANGresetAccumulatedAngle(HTANG);
-		}
-		writeDebugStreamLine("Cumulative: %d", HTANGreadAccumulatedAngle(HTANG));
-	}
+	motor[leftDrive] = -20;
+	motor[rightDrive] = -20;
+	wait1Msec(1000);
+	motor[leftDrive] = 0;
+	motor[rightDrive] = 0;
+	writeDebugStreamLine("Cumulative: %d", HTANGreadAccumulatedAngle(HTANG));
 
 }

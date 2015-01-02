@@ -6,12 +6,14 @@ void driveForward(int millis, int speed);
 void driveForward(int speed);
 void driveBackward(int millis, int speed);
 void driveBackward(int speed);
-void driveStop();
+void driveForwardDist(int inches, int speed);
+void driveBackwardDist(int inches, int speed);
+void driveStop(bool forward);
 void turnEuler(int degrees, int speed, bool left);
 int gyroValue();
 int gyro_zero;
 
-#include "drivers/hitechnic-angle.h"
+#include "hitechnic-angle.h"
 
 /*
 Copyright (c) 2014 Jake Lee, AJ Stubbard, Team 4790
@@ -53,7 +55,7 @@ void calibrateGyro() {
 void driveForward(int millis, int speed) {
 	driveForward(speed);
 	wait1Msec(millis);
-	driveStop();
+	driveStop(true);
 }
 
 void driveForward(int speed) {
@@ -69,9 +71,55 @@ void driveBackward(int speed) {
 	driveForward(-speed);
 }
 
-void driveStop() {
-	motor[leftDrive] = 0;
-	motor[rightDrive] = 0;
+void driveForwardDist(int inches, int speed) {
+	//driving forward using the angle sensor
+	int degrees;
+	HTANGresetAccumulatedAngle(HTANG);		//reset accumulated angle
+	wait1Msec(100);
+	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+	while(abs(HTANGreadAccumulatedAngle(HTANG)) < degrees){
+		motor[leftDrive] = speed;
+		motor[rightDrive] = speed;
+		writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)));
+	}
+	writeDebugStreamLine("------------------------");
+	driveStop(true);
+	wait1Msec(1000);
+	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)));
+}
+
+void driveBackwardDist(int inches, int speed) {
+	//driving backward using the angle sensor
+	int degrees;
+	HTANGresetAccumulatedAngle(HTANG);		//reset accumulated angle
+	wait1Msec(100);
+	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+	while(abs(HTANGreadAccumulatedAngle(HTANG)) < degrees){
+		motor[leftDrive] = -speed;
+		motor[rightDrive] = -speed;
+		writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)));
+	}
+	writeDebugStreamLine("------------------------");
+	driveStop(false);
+	wait1Msec(1000);
+	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)));
+}
+
+void driveStop(bool forward) {
+	//braking is a lot quicker when something is sent to the motors
+	if(forward == true){
+		motor[leftDrive] = -1;
+		motor[rightDrive] = -1;
+		wait1Msec(100);
+		motor[leftDrive] = 0;
+		motor[rightDrive] = 0;
+	}else{
+		motor[leftDrive] = 1;
+		motor[rightDrive] = 1;
+		wait1Msec(100);
+		motor[leftDrive] = 0;
+		motor[rightDrive] = 0;
+	}
 }
 
 //Gyroscope turn function
@@ -194,7 +242,8 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 				motor[rightDrive] = 5;
 			}
 			wait1Msec(10);
-			driveStop();
+			motor[leftDrive] = 0;
+			motor[rightDrive] = 0;
 			break;
 		}
 

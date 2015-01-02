@@ -2,6 +2,7 @@
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     Sonar,          sensorSONAR)
 #pragma config(Sensor, S3,     gyro,           sensorI2CHiTechnicGyro)
+#pragma config(Sensor, S4,     HTANG,          sensorI2CCustom)
 #pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C1_2,     liftLeft,      tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     intake,        tmotorTetrix, openLoop)
@@ -19,7 +20,28 @@
 #include "util.h"
 #include "lift.h"
 #include "autonomous3.h"
-#include "drivers/hitechnic-angle.h"
+
+/*
+Copyright (c) 2014 Jake Lee, Team 4790
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
 
 //TOWER AUTONOMOUS
 int sonarvalue = 0;
@@ -46,23 +68,28 @@ void autoStraight(){
 }
 
 void autoDiag(){
-	driveBackward(2000, 20);
+	driveBackwardDist(24, 20);
+	wait1Msec(100);
 	turnEuler(90,70,true);
-	driveBackward(2200, 20);
+	wait1Msec(100);
+	driveBackwardDist(28, 20);
+	wait1Msec(100);
 	turnEuler(135,70,false);
-	driveBackward(1400, 20);
+	wait1Msec(100);
+	driveBackwardDist(18, 20);
 	wait1Msec(5000);
-	driveForward(700, 20);
+	//pole
+	driveForwardDist(15, 20);
 	turnEuler(90,70,false);
-	driveBackward(1300, 20);
+	driveBackwardDist(10, 20);
 	turnEuler(90,70,true);
-	driveBackward(1500,40);
+	driveBackwardDist(20,40);
 	return;
 }
 
 void autoDiagR(){
-	turnEuler(135, 70, false);
-	driveBackward(3000, 20);
+	turnEuler(45, 70, true);
+	driveForward(3000, 20);
 	return;
 }
 
