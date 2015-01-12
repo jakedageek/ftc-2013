@@ -8,111 +8,77 @@
 #define GOAL_LIFT 4 	//calibrate
 #define LIFT_UP 100 	//calibrate
 #define LIFT_DOWN -20 	//calibrate
-#define LIFT_TRIM 40  	//calibrate
+#define LIFT_STALL 10		//calibrate
 #define GATE_OPEN 40 		//calibrate
 #define GATE_CLOSE 60 	//calibrate
+#define BANANA_DOWN 1		//calibrate
+#define BANANA_UP 2			//calibrate
 
-int temp;
-
-void liftMove(int target, bool up);
-void equalize();
-void trimLeft(bool up);
-void trimRight(bool up);
+void liftMove(int target);
+void liftMan(bool up);
 void hook(bool up);
+void gate(bool open);
+void banana(bool up);
 
-void liftMove(int target, bool up){
+void liftMove(int target){
 	//if the lift is moving UP
-	if(up){
-		while(nMotorEncoder[liftLeft] < target && nMotorEncoder[liftRight] < target){
+	if(target > nMotorEncoder[liftLeft]){
+		while(nMotorEncoder[liftLeft] < target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
-			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
 			motor[liftLeft] = LIFT_UP;
 			motor[liftRight] = LIFT_UP;
 		}
-		motor[liftLeft] = 0;
-		motor[liftRight] = 0;
-		equalize();
+		motor[liftLeft] = LIFT_STALL;
+		motor[liftRight] = LIFT_STALL;
 	}else{ 				//if the lift is moving DOWN
-		while(nMotorEncoder[liftLeft] > target && nMotorEncoder[liftRight] > target){
+		while(nMotorEncoder[liftLeft] > target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
-			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
 			motor[liftLeft] = LIFT_DOWN;
 			motor[liftRight] = LIFT_DOWN;
 		}
-		motor[liftLeft] = 0;
-		motor[liftRight] = 0;
-		equalize();
+		motor[liftLeft] = LIFT_STALL;
+		motor[liftRight] = LIFT_STALL;
 	}
-
+	return;
 }
 
-void equalize(){
-	//If two lifts are at different heights, match the heights
-	writeDebugStreamLine("EQUALIZE");
-	if(nMotorEncoder[liftLeft] > nMotorEncoder[liftRight]){
-		writeDebugStream("Left > Right");
-		while(nMotorEncoder[liftRight] > nMotorEncoder[liftLeft]){
-			motor[liftLeft] = 50;
-			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
-			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
-		}
-		motor[liftLeft] = 0;
-	}else if(nMotorEncoder[liftLeft] < nMotorEncoder[liftRight]){
-		writeDebugStream("Right > Left");
-		while(nMotorEncoder[liftLeft] < nMotorEncoder[liftRight]){
-			motor[liftRight] = 50;
-			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
-			writeDebugStreamLine("Right Encoder %d", nMotorEncoder[liftRight]);
-		}
-		motor[liftRight] = 0;
-	}
-}
-
-void trimLeft(bool up){
-	//Change the height of left lift without changing the encoder value
-	if(up){
-		temp = nMotorEncoder[liftLeft];
-		motor[liftLeft] = LIFT_TRIM;
-		wait1Msec(300);
-		motor[liftLeft] = 0;
-		nMotorEncoder[liftLeft] = temp;
-		writeDebugStreamLine("temp %d", temp);
+void liftMan(bool up){
+	if(up == true){
+		motor[liftLeft] = LIFT_UP;
+		motor[liftRight] = LIFT_UP;
 	}else{
-		temp = nMotorEncoder[liftLeft];
-		motor[liftLeft] = -LIFT_TRIM;
-		wait1Msec(300);
-		motor[liftLeft] = 0;
-		nMotorEncoder[liftLeft] = temp;
-		writeDebugStreamLine("temp %d", temp);
+		motor[liftLeft] = LIFT_DOWN;
+		motor[liftRight] = LIFT_DOWN;
 	}
-}
-
-void trimRight(bool up){
-	//Change the height of left lift without changing the encoder value
-	if(up){
-		temp = nMotorEncoder[liftRight];
-		motor[liftRight] = LIFT_TRIM;
-		wait1Msec(300);
-		motor[liftRight] = 0;
-		nMotorEncoder[liftRight] = temp;
-		writeDebugStreamLine("temp %d", temp);
-	}else{
-		temp = nMotorEncoder[liftRight];
-		motor[liftRight] = -LIFT_TRIM;
-		wait1Msec(300);
-		motor[liftRight] = 0;
-		nMotorEncoder[liftRight] = temp;
-		writeDebugStreamLine("temp %d", temp);
-	}
+	return;
 }
 
 void hook(bool up){
-	if(up){
-		servo[hookLeft] = 182;
-		servo[hookRight] = 79;
+	if(up == true){
+		//hook up positions
+		servo[hookLeft] = 1; //calibrate
+		servo[hookRight] = 1; //calibrate
 	}else{
-		servo[hookLeft] = 230;
-		servo[hookRight] = 34;
+		servo[hookLeft] = 180; //calibrate
+		servo[hookRight] = 180; //calibrate
+	}
+}
+
+void gate(bool open){
+	if(open == true){
+		//hook up positions
+		servo[gateBack] = 1; //calibrate
+	}else{
+		servo[gateBack] = 180; //calibrate
+	}
+}
+
+void banana(bool up){
+	if(up == true){
+		//hook up positions
+		servo[bananaServo] = 1; //calibrate
+	}else{
+		servo[bananaServo] = 180; //calibrate
 	}
 }
 

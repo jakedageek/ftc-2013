@@ -9,7 +9,7 @@
 #pragma config(Motor,  mtr_S1_C3_2,     motorI,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C2_1,    gateFront,            tServoStandard)
+#pragma config(Servo,  srvo_S1_C2_1,    bananaServo,            tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_2,    gateBack,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_3,    hookLeft,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_4,    hookRight,            tServoStandard)
@@ -47,6 +47,8 @@ THE SOFTWARE.
 int sonarvalue = 0;
 void autoStraight();
 void autoDiag();
+void autoDiagR();
+void autoHoriz();
 
 //if the end goal is straight ahead
 void autoStraight(){
@@ -68,22 +70,26 @@ void autoStraight(){
 }
 
 void autoDiag(){
-	driveBackwardDist(24, 20);
+	driveBackwardDist(24, 20);	//drive out from the
 	wait1Msec(100);
-	turnEuler(90,70,true);
+	turnEuler(90,70,true); //turn right
 	wait1Msec(100);
-	driveBackwardDist(28, 20);
+	driveBackwardDist(28, 20); //drive left backwards
 	wait1Msec(100);
-	turnEuler(135,70,false);
+	turnEuler(135,70,false); //turn towards the goal
 	wait1Msec(100);
-	driveBackwardDist(18, 20);
+	driveBackwardDist(18, 20); // move towards the goal
 	wait1Msec(5000);
 	//pole
-	driveForwardDist(15, 20);
-	turnEuler(90,70,false);
-	driveBackwardDist(10, 20);
-	turnEuler(90,70,true);
-	driveBackwardDist(20,40);
+	driveForwardDist(15, 20); //drive back
+	wait1Msec(100);
+	turnEuler(90,70,false); //turn towards pole
+	wait1Msec(100);
+	driveBackwardDist(10, 20); //drive towards pole
+	wait1Msec(100);
+	turnEuler(90,70,true); //turn towards pole
+	wait1Msec(100);
+	driveBackwardDist(20,40); //drive against pole and knock it down
 	return;
 }
 
@@ -93,10 +99,34 @@ void autoDiagR(){
 	return;
 }
 
+void autoHoriz(){
+	driveBackwardDist(24,20); //drive out of zone
+	wait1Msec(100);
+	turnEuler(45,70,true); //turn diagonally towards goal
+	wait1Msec(100);
+	driveBackwardDist(30,20); //drive backwards
+	wait1Msec(100);
+	turnEuler(135,70,false); //turn directly towards goal
+	wait1Msec(100);
+	driveBackwardDist(15,20); //drive towards to goal
+	wait1Msec(5000);
+	//pole
+	driveForwardDist(15, 20); //drive back
+	wait1Msec(100);
+	turnEuler(90,70,false); //turn towards pole
+	wait1Msec(100);
+	driveBackwardDist(10, 20); //drive towards pole
+	wait1Msec(100);
+	turnEuler(90,70,true); //turn towards pole
+	wait1Msec(100);
+	driveBackwardDist(20,40); //drive against pole and knock it down
+	return;
+}
+
 
 void initializeRobot(){
 	calibrateGyro();
-
+	nMotorEncoder[liftLeft] = 0;
 	//RESET SERVOS
 
 	return;
