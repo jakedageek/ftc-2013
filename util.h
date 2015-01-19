@@ -23,6 +23,9 @@
 #define UTIL_H
 
 #include "JoystickDriver.c"
+#include "SMUXdriver/hitechnic-sensormux.h"
+#include "SMUXdriver/hitechnic-angle.h"
+#include "SMUXdriver/lego-ultrasound.h"
 
 #define CONTROLLER_A 02
 #define CONTROLLER_X 01
@@ -46,6 +49,9 @@
 
 const bool bLogarithmicScale = true;
 const bool kMaximumPowerLevel = 100;  // Adjust to set max power level to be used.
+
+const tMUXSensor HTANG = msensor_S3_1;
+const tMUXSensor Sonar = msensor_S3_2;
 
 int joystickValue(int controller, int joy, int axis)
 // Grab a joystick value from the controller state

@@ -1,21 +1,17 @@
 #ifndef LIFT_H
 #define LIFT_H
 
-#define RESET 0
-#define THIRTY_LIFT 1 	//calibrate
-#define SIXTY_LIFT 2 	//calibrate
-#define NINETY_LIFT 3 	//calibrate
-#define GOAL_LIFT 4 	//calibrate
-#define LIFT_UP 100 	//calibrate
-#define LIFT_DOWN -20 	//calibrate
-#define LIFT_STALL 10		//calibrate
-#define GATE_OPEN 40 		//calibrate
-#define GATE_CLOSE 60 	//calibrate
-#define BANANA_DOWN 1		//calibrate
-#define BANANA_UP 2			//calibrate
+#define RESET 190
+#define THIRTY_LIFT 625
+#define SIXTY_LIFT 1275
+#define NINETY_LIFT 1980
+#define GOAL_LIFT 2675
+#define LIFT_UP 60
+#define LIFT_DOWN -5
+#define LIFT_STALL 10
 
 void liftMove(int target);
-void liftMan(bool up);
+void liftMan(int up);
 void hook(bool up);
 void gate(bool open);
 void banana(bool up);
@@ -42,13 +38,16 @@ void liftMove(int target){
 	return;
 }
 
-void liftMan(bool up){
-	if(up == true){
+void liftMan(int up){
+	if(up == 0){
 		motor[liftLeft] = LIFT_UP;
 		motor[liftRight] = LIFT_UP;
-	}else{
+	}else if(up == 1){
 		motor[liftLeft] = LIFT_DOWN;
 		motor[liftRight] = LIFT_DOWN;
+	}else if(up == 2){
+		motor[liftLeft] = LIFT_STALL;
+		motor[liftRight] = LIFT_STALL;
 	}
 	return;
 }

@@ -13,7 +13,8 @@ void turnEuler(int degrees, int speed, bool left);
 int gyroValue();
 int gyro_zero;
 
-#include "hitechnic-angle.h"
+#include "util.h"
+
 
 /*
 Copyright (c) 2014 Jake Lee, AJ Stubbard, Team 4790
@@ -74,35 +75,37 @@ void driveBackward(int speed) {
 void driveForwardDist(int inches, int speed) {
 	//driving forward using the angle sensor
 	int degrees;
-	HTANGresetAccumulatedAngle(HTANG);		//reset accumulated angle
+	int initAng;
+	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
 	wait1Msec(100);
 	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
-	while(abs(HTANGreadAccumulatedAngle(HTANG)) < degrees){
+	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
 		motor[leftDrive] = speed;
 		motor[rightDrive] = speed;
-		writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)));
+		writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 	}
 	writeDebugStreamLine("------------------------");
 	driveStop(true);
 	wait1Msec(1000);
-	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)));
+	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 }
 
 void driveBackwardDist(int inches, int speed) {
 	//driving backward using the angle sensor
 	int degrees;
-	HTANGresetAccumulatedAngle(HTANG);		//reset accumulated angle
+	int initAng;
+	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
 	wait1Msec(100);
 	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
-	while(abs(HTANGreadAccumulatedAngle(HTANG)) < degrees){
+	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
 		motor[leftDrive] = -speed;
 		motor[rightDrive] = -speed;
-		writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)));
+		writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 	}
 	writeDebugStreamLine("------------------------");
 	driveStop(false);
 	wait1Msec(1000);
-	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)));
+	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 }
 
 void driveStop(bool forward) {
