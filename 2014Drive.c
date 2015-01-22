@@ -33,14 +33,14 @@ task main(){
 	hook(true);			//reset servos
 	banana(false);
 	gate(false);
-	servo[bananaServo] = 200;
+	//servo[bananaServo] = 200;
 	while(true){
     	// Drive controls
         motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
         motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
 
         //ball carrier controls
-        if(joystick.joy1_TopHat == 0){
+        if(joystick.joy1_TopHat == 6){
 					//ball carrier up
   				banana(true);
 				}else if(joystick.joy1_TopHat == 4){

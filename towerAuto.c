@@ -8,14 +8,14 @@
 #pragma config(Motor,  mtr_S1_C3_2,     motorI,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C1_1,    hookRight,            tServoStandard)
-#pragma config(Servo,  srvo_S1_C1_2,    hookLeft,             tServoStandard)
+#pragma config(Servo,  srvo_S1_C1_1,    bananaServo,          tServoStandard)
+#pragma config(Servo,  srvo_S1_C1_2,    gateBack,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C1_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C1_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C1_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C1_6,    servo6,               tServoNone)
-#pragma config(Servo,  srvo_S2_C1_1,    bananaServo,          tServoStandard)
-#pragma config(Servo,  srvo_S2_C1_2,    gateBack,             tServoStandard)
+#pragma config(Servo,  srvo_S2_C1_1,    hookRight,            tServoStandard)
+#pragma config(Servo,  srvo_S2_C1_2,    hookLeft,             tServoStandard)
 #pragma config(Servo,  srvo_S2_C1_3,    servo9,               tServoNone)
 #pragma config(Servo,  srvo_S2_C1_4,    servo10,              tServoNone)
 #pragma config(Servo,  srvo_S2_C1_5,    servo11,              tServoNone)
@@ -25,6 +25,9 @@
 #include "util.h"
 #include "lift.h"
 #include "autonomous3.h"
+
+const tMUXSensor HTANG = msensor_S3_1;
+const tMUXSensor Sonar = msensor_S3_2;
 
 /*
 Copyright (c) 2014 Jake Lee, Team 4790
@@ -58,11 +61,13 @@ void autoHoriz();
 //if the end goal is straight ahead
 void autoStraight(){
 	int a = 0;
+	int dist = 0;
 	while (true){
-		writeDebugStreamLine("%d",USreadDist(Sonar));
+		dist = USreadDist(Sonar);
+		writeDebugStreamLine("%d",dist);
 		motor[leftDrive] = -20;
 		motor[rightDrive] = -20;
-		if(USreadDist(Sonar) < 30){
+		if(dist < 30){
 			a ++;
 		}
 		if(a > 7){
@@ -131,26 +136,30 @@ void autoHoriz(){
 
 void initializeRobot(){
 	calibrateGyro();
-	nMotorEncoder[liftLeft] = 0;
+	nMotorEncoder[liftLeft] = 0;		//reset encoder
+	hook(true);			//reset servos
+	banana(false);
+	gate(false);
+	servo[bananaServo] = 200;
 	//RESET SERVOS
-
 	return;
 }
 
 task main()
 {
-	int i = 0;
+	int a = 0;
 	int j = 0;
 	int k = 0;
 	initializeRobot();
 	//waitForStart();
 	while(true){
 		sonarvalue = USreadDist(Sonar);
-		writeDebugStreamLine("%d", sonarvalue);
-		if(sonarvalue == 255){
+		writeDebugStreamLine("sonar = %d", sonarvalue);
+		if(sonarvalue == -1){
 			//Diagonal center console
-			i++;
-			if(i > 5){
+			a++;
+			writeDebugStreamLine("a = %d", a);
+			if(a > 5){
 				nxtDisplayCenteredTextLine(3, "Diagonal, %d", sonarvalue);
 				autoDiag();
 				wait1Msec(2000);
@@ -162,7 +171,7 @@ task main()
 		}else if(sonarvalue < 115){
 			//goal is straight ahead
 			j++;
-			writeDebugStreamLine("%d", j);
+			writeDebugStreamLine("j = %d", j);
 			if(j > 5){
 				nxtDisplayCenteredTextLine(3, "Ahead, %d", sonarvalue);
 				autoStraight();
@@ -171,6 +180,7 @@ task main()
 		}else{
 			//goal is sideways
 			k++;
+			writeDebugStreamLine("k = %d", k);
 			if(k > 5){
 				nxtDisplayCenteredTextLine(3, "Sideways, %d", sonarvalue);
 				break;
