@@ -60,6 +60,42 @@ void autoHoriz();
 
 //if the end goal is straight ahead
 void autoStraight(){
+	liftMan(0);
+	wait1Msec(200);
+	liftMan(2);
+	wait1Msec(10);
+	driveBackwardDist(35, 50);	//drive out from the parking zone
+	wait1Msec(50);
+
+	liftMove(GOAL_LIFT);
+	wait1Msec(100);
+
+	driveBackwardDist(5,15); //move closer
+
+	wait1Msec(1000);
+
+	gate(true);
+	wait1Msec(100);
+	bananaKnock();
+	wait1Msec(100);
+	gate(false);
+	wait1Msec(50);
+
+	driveForwardDist(5,15); //move closer
+
+	wait1Msec(500);
+
+	liftMove(300);
+
+	turnEuler(90,55,false); //turn towards pole
+	wait1Msec(10);
+	driveBackwardDist(14, 50); //drive towards pole
+	turnEuler(90,55,true); //turn towards pole
+	driveBackwardDist(30,40); //drive against pole and knock it down
+	wait1Msec(10);
+	liftMove(RESET);
+
+/*
 	int a = 0;
 	int dist = 0;
 	while (true){
@@ -76,44 +112,64 @@ void autoStraight(){
 			break;
 		}
 	}
+
+*/
 	return;
 }
 
 void autoDiag(){
-	liftMove(400);
+	liftMan(0);
+	wait1Msec(200);
 	liftMan(2);
 	writeDebugStreamLine("Function AutoDiag");
-	driveBackwardDist(24, 20);	//drive out from the parking zone
-	wait1Msec(20);
-	turnEuler(90,70,true); //turn right
-	wait1Msec(20);
-	driveBackwardDist(28, 20); //drive left backwards
-	wait1Msec(20);
-	turnEuler(135,70,false); //turn towards the goal
-	wait1Msec(20);
-	driveBackwardDist(17, 20); // move towards the goal
-	wait1Msec(5000);
+	driveBackwardDist(27, 30);	//drive out from the parking zone
+	wait1Msec(10);
+	turnEuler(90,55,true); //turn right
+	wait1Msec(10);
+	driveBackwardDist(30, 30); //drive left backwards
+	wait1Msec(10);
+	turnEuler(133,70,false); //turn towards the goal SYNC
+	wait1Msec(10);
+	driveBackwardDist(17, 30); // move towards the goal
 	//score
-	/*
+	wait1Msec(50);
+
 	liftMove(GOAL_LIFT);
-	banana(true);
+	wait1Msec(100);
+
+	driveBackwardDist(5,15); //move closer
+
+	wait1Msec(1000);
+
 	gate(true);
+	wait1Msec(100);
 	bananaKnock();
+	wait1Msec(100);
 	gate(false);
-	banana(false);
+	wait1Msec(50);
+
+	driveForwardDist(5,15); //move closer
+
+	wait1Msec(500);
+
 	liftMove(RESET);
-	liftMove(400);
-	*/
+
+	driveForwardDist(10,50);
+
+	/*
+	liftMan(2);
+
 	//pole
-	driveForwardDist(15, 20); //drive back
-	wait1Msec(20);
-	turnEuler(90,70,false); //turn towards pole
-	wait1Msec(20);
-	driveBackwardDist(16, 20); //drive towards pole
-	wait1Msec(20);
-	turnEuler(90,70,true); //turn towards pole
-	wait1Msec(20);
-	driveBackwardDist(40,40); //drive against pole and knock it down
+
+	turnEuler(90,55,false); //turn towards pole
+	wait1Msec(10);
+	driveBackwardDist(14, 50); //drive towards pole
+	turnEuler(90,55,true); //turn towards pole
+	driveBackwardDist(30,40); //drive against pole and knock it down
+	wait1Msec(10);
+	liftMove(RESET);
+
+	*/
 	return;
 }
 
@@ -126,22 +182,22 @@ void autoDiagR(){
 void autoHoriz(){
 	driveBackwardDist(24,20); //drive out of zone
 	wait1Msec(100);
-	turnEuler(45,70,true); //turn diagonally towards goal
+	turnEuler(45,55,true); //turn diagonally towards goal
 	wait1Msec(100);
 	driveBackwardDist(30,20); //drive backwards
 	wait1Msec(100);
-	turnEuler(135,70,false); //turn directly towards goal
+	turnEuler(135,55,false); //turn directly towards goal
 	wait1Msec(100);
 	driveBackwardDist(15,20); //drive towards to goal
 	wait1Msec(5000);
 	//pole
 	driveForwardDist(15, 20); //drive back
 	wait1Msec(100);
-	turnEuler(90,70,false); //turn towards pole
+	turnEuler(90,55,false); //turn towards pole
 	wait1Msec(100);
 	driveBackwardDist(10, 20); //drive towards pole
 	wait1Msec(100);
-	turnEuler(90,70,true); //turn towards pole
+	turnEuler(90,55,true); //turn towards pole
 	wait1Msec(100);
 	driveBackwardDist(20,40); //drive against pole and knock it down
 	return;
@@ -168,7 +224,7 @@ task main()
 	while(true){
 		sonarvalue = USreadDist(Sonar);
 		writeDebugStreamLine("sonar = %d", sonarvalue);
-		if(sonarvalue == -1){
+		if(sonarvalue < 0){
 			//Diagonal center console
 			a++;
 			writeDebugStreamLine("a = %d", a);
@@ -176,12 +232,12 @@ task main()
 				writeDebugStreamLine("Diagonal, %d", sonarvalue);
 				autoDiag();
 				wait1Msec(2000);
-				autoDiagR();
+				//autoDiagR();
 				break;
 			}
 			//The ultrasonic sensor cannot detect diagonal surfaces - therefore, it returns 255 as its default value.
 
-		}else if(sonarvalue < 115){
+		}else if(sonarvalue < 120){
 			//goal is straight ahead
 			j++;
 			writeDebugStreamLine("j = %d", j);

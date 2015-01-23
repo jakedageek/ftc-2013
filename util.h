@@ -39,6 +39,7 @@
 #define CONTROLLER_R3 12
 
 #define CONTROLLER_ST 10
+#define CONTROLLER_BK 09
 
 #define DPAD_UP 0
 #define DPAD_DOWN 4

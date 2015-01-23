@@ -1,14 +1,14 @@
 #ifndef LIFT_H
 #define LIFT_H
 
-#define RESET 190
+#define RESET 230
 #define THIRTY_LIFT 4000
 #define SIXTY_LIFT 6000
 #define NINETY_LIFT 8000
 #define GOAL_LIFT 11000
 #define MAX_LIFT 12000
 #define LIFT_UP 100
-#define LIFT_DOWN -8
+#define LIFT_DOWN -5
 #define LIFT_STALL 8
 
 void liftMove(int target);
@@ -67,7 +67,7 @@ void liftMan(int up){
 			motor[liftRight] = LIFT_DOWN;
 		}
 	}else if(up == 2){
-		if(nMotorEncoder[liftLeft] < 360){	//if lift is completely collapsed, no stall torque
+		if(nMotorEncoder[liftLeft] < 220){	//if lift is completely collapsed, no stall torque
 			motor[liftLeft] = 0;
 			motor[liftRight] = 0;
 		}else{															//else, stall to maintain height
@@ -101,13 +101,13 @@ void gate(bool open){
 void banana(bool score){
 	if(score == true){
 		//banana score
-		if(servo[bananaServo] > 124){
-			while(servo[bananaServo] > 124){
+		if(servo[bananaServo] > 128){
+			while(servo[bananaServo] > 128){
 				servo[bananaServo] = servo[bananaServo] - 1;
 				wait1Msec(10);
 			}
 		}else{
-			while(servo[bananaServo] < 124){
+			while(servo[bananaServo] < 128){
 				servo[bananaServo] = servo[bananaServo] + 1;
 				wait1Msec(10);
 			}
@@ -115,13 +115,13 @@ void banana(bool score){
 		//servo[bananaServo] = 124; //calibrate
 		bananascore = true;
 	}else{
-		if(servo[bananaServo] > 200){
-			while(servo[bananaServo] > 200){
+		if(servo[bananaServo] > 206){
+			while(servo[bananaServo] > 206){
 				servo[bananaServo] = servo[bananaServo] - 1;
 				wait1Msec(10);
 			}
 		}else{
-			while(servo[bananaServo] < 200){
+			while(servo[bananaServo] < 206){
 				servo[bananaServo] = servo[bananaServo] + 1;
 				wait1Msec(10);
 			}
@@ -135,7 +135,7 @@ void banana(bool score){
 void bananaKnock(){
 	if(bananascore){
 		servo[bananaServo] = servo[bananaServo] - 5;
-		wait1Msec(500);
+		wait1Msec(1000);
 		servo[bananaServo] = servo[bananaServo] + 5;
 	}else{
 		writeDebugStreamLine("knock failed");
@@ -144,9 +144,11 @@ void bananaKnock(){
 
 void bananaman(bool score){
 	if(score){
-		servo[bananaServo] = servo[bananaServo] - 5;
+		servo[bananaServo] = servo[bananaServo] - 1;
+		wait1Msec(50);
 	}else{
-		servo[bananaServo] = servo[bananaServo] + 5;
+		servo[bananaServo] = servo[bananaServo] + 1;
+		wait1Msec(50);
 	}
 }
 
