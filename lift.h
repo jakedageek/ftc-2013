@@ -16,6 +16,8 @@ void liftMan(int up);
 void hook(bool up);
 void gate(bool open);
 void banana(bool score);
+void bananaman(bool score);
+void bananaKnock();
 
 bool bananascore = false;
 
@@ -126,6 +128,25 @@ void banana(bool score){
 		}
 		//servo[bananaServo] = 200; //calibrate
 		bananascore = false;
+	}
+}
+
+//knocks the banana down to score easier
+void bananaKnock(){
+	if(bananascore){
+		servo[bananaServo] = servo[bananaServo] - 5;
+		wait1Msec(500);
+		servo[bananaServo] = servo[bananaServo] + 5;
+	}else{
+		writeDebugStreamLine("knock failed");
+	}
+}
+
+void bananaman(bool score){
+	if(score){
+		servo[bananaServo] = servo[bananaServo] - 5;
+	}else{
+		servo[bananaServo] = servo[bananaServo] + 5;
 	}
 }
 

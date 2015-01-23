@@ -100,7 +100,7 @@ void driveBackwardDist(int inches, int speed) {
 	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
 		motor[leftDrive] = -speed;
 		motor[rightDrive] = -speed;
-		writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+		writeDebugStreamLine("accumulated angle: %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 	}
 	writeDebugStreamLine("------------------------");
 	driveStop(false);

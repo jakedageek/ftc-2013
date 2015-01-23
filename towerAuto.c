@@ -80,26 +80,40 @@ void autoStraight(){
 }
 
 void autoDiag(){
-	driveBackwardDist(24, 20);	//drive out from the
-	wait1Msec(100);
+	liftMove(400);
+	liftMan(2);
+	writeDebugStreamLine("Function AutoDiag");
+	driveBackwardDist(24, 20);	//drive out from the parking zone
+	wait1Msec(20);
 	turnEuler(90,70,true); //turn right
-	wait1Msec(100);
+	wait1Msec(20);
 	driveBackwardDist(28, 20); //drive left backwards
-	wait1Msec(100);
+	wait1Msec(20);
 	turnEuler(135,70,false); //turn towards the goal
-	wait1Msec(100);
-	driveBackwardDist(18, 20); // move towards the goal
+	wait1Msec(20);
+	driveBackwardDist(17, 20); // move towards the goal
 	wait1Msec(5000);
+	//score
+	/*
+	liftMove(GOAL_LIFT);
+	banana(true);
+	gate(true);
+	bananaKnock();
+	gate(false);
+	banana(false);
+	liftMove(RESET);
+	liftMove(400);
+	*/
 	//pole
 	driveForwardDist(15, 20); //drive back
-	wait1Msec(100);
+	wait1Msec(20);
 	turnEuler(90,70,false); //turn towards pole
-	wait1Msec(100);
-	driveBackwardDist(10, 20); //drive towards pole
-	wait1Msec(100);
+	wait1Msec(20);
+	driveBackwardDist(16, 20); //drive towards pole
+	wait1Msec(20);
 	turnEuler(90,70,true); //turn towards pole
-	wait1Msec(100);
-	driveBackwardDist(20,40); //drive against pole and knock it down
+	wait1Msec(20);
+	driveBackwardDist(40,40); //drive against pole and knock it down
 	return;
 }
 
@@ -140,7 +154,6 @@ void initializeRobot(){
 	hook(true);			//reset servos
 	banana(false);
 	gate(false);
-	servo[bananaServo] = 200;
 	//RESET SERVOS
 	return;
 }
@@ -160,7 +173,7 @@ task main()
 			a++;
 			writeDebugStreamLine("a = %d", a);
 			if(a > 5){
-				nxtDisplayCenteredTextLine(3, "Diagonal, %d", sonarvalue);
+				writeDebugStreamLine("Diagonal, %d", sonarvalue);
 				autoDiag();
 				wait1Msec(2000);
 				autoDiagR();
@@ -173,7 +186,7 @@ task main()
 			j++;
 			writeDebugStreamLine("j = %d", j);
 			if(j > 5){
-				nxtDisplayCenteredTextLine(3, "Ahead, %d", sonarvalue);
+				writeDebugStreamLine("Ahead, %d", sonarvalue);
 				autoStraight();
 				break;
 			}
@@ -182,7 +195,7 @@ task main()
 			k++;
 			writeDebugStreamLine("k = %d", k);
 			if(k > 5){
-				nxtDisplayCenteredTextLine(3, "Sideways, %d", sonarvalue);
+				writeDebugStreamLine("Sideways, %d", sonarvalue);
 				break;
 			}
 		}

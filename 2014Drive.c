@@ -42,10 +42,12 @@ task main(){
         //ball carrier controls
         if(joystick.joy1_TopHat == 6){
 					//ball carrier up
-  				banana(true);
+  				//banana(true);
+        	bananaman(true);
 				}else if(joystick.joy1_TopHat == 4){
 					//ball carrier down
-					banana(false);
+					//banana(false);
+					bananaman(false);
 				}
 
 				//ball release controls - on toggle
