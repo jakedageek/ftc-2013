@@ -220,7 +220,7 @@ task main()
 	int j = 0;
 	int k = 0;
 	initializeRobot();
-	//waitForStart();
+	waitForStart();
 	while(true){
 		sonarvalue = USreadDist(Sonar);
 		writeDebugStreamLine("sonar = %d", sonarvalue);

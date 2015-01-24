@@ -29,37 +29,30 @@
 const tMUXSensor HTANG = msensor_S3_1;
 const tMUXSensor Sonar = msensor_S3_2;
 
-//RAMP AUTONOMOUS
+task main()
 
-void initializeRobot(){
+{
+int initAng;
+int sonarvalue;
+float lastTime = 0;				//used for dt calculation
+float dt = 0;					//dt for integration
+float g_val = 0;				//gyro value in degrees per second
+float currPos = 0;				//current turn position
+
 	calibrateGyro();
-	nMotorEncoder[liftLeft] = 0;		//reset encoder
-	hook(true);			//reset servos
-	banana(false);
-	gate(false);
-	//RESET SERVOS
-	return;
-	return;
-}
+initAng = HTANGreadAccumulatedAngle(HTANG);
+	while(true){
+		sonarvalue = USreadDist(Sonar);
+		writeDebugStreamLine("sonar = %d", sonarvalue);
+		writeDebugStreamLine("accumulated angle: %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 
-task main(){
-	initializeRobot();
-	waitForStart();
+		g_val = gyroValue();
+		dt = nSysTime - lastTime;
+		lastTime = nSysTime;
+		currPos += (dt/1000.) * g_val;
+		//integration end
+		writeDebugStreamLine("rotated %f", currPos);
+	}
 
-	//drive backwards off the ramp
-	driveBackwardDist(40, 40);
-	//keep driving
-	//driveBackward(1000);
-	//stop infront of the tube67
-	//driveStop();
-	//hook the tube
-	//hook(false);
-	//raise the arm
-	//liftMove(SIXTY_LIFT, true);
-	//open the gate
-	//turn
-	//turnEuler(35, 35, false);
-	//drive forward to the goal
-	//driveForward(4000);
 
 }
