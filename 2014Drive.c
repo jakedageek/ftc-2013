@@ -28,7 +28,7 @@
 #include "lift.h"
 
 task main(){
-	//waitForStart();
+	waitForStart();
 	nMotorEncoder[liftLeft] = 0;		//reset encoder
 	hook(true);			//reset servos
 	banana(false);
@@ -77,7 +77,7 @@ task main(){
 		  	}
 
 		  	//reset encoder
-		  	if(joy1Btn(CONTROLLER_ST)){
+		  	if(joy2Btn(CONTROLLER_B)){
 		  		nMotorEncoder[liftLeft] = 0;
 		  	}
 

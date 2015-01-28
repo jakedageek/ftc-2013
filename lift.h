@@ -39,7 +39,7 @@ void liftMove(int target){
 		wait1Msec(100);
 		while(nMotorEncoder[liftLeft] > target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
-			motor[liftLeft] = LIFT_DOWN;
+			motor[liftLeft] = LIFT_DOWN - 10;
 			motor[liftRight] = LIFT_DOWN;
 		}
 		motor[liftLeft] = LIFT_STALL;
@@ -135,7 +135,7 @@ void banana(bool score){
 void bananaKnock(){
 	if(bananascore){
 		servo[bananaServo] = servo[bananaServo] - 5;
-		wait1Msec(1000);
+		wait1Msec(1300);
 		servo[bananaServo] = servo[bananaServo] + 5;
 	}else{
 		writeDebugStreamLine("knock failed");

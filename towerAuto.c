@@ -55,7 +55,6 @@ THE SOFTWARE.
 int sonarvalue = 0;
 void autoStraight();
 void autoDiag();
-void autoDiagR();
 void autoHoriz();
 
 //if the end goal is straight ahead
@@ -64,7 +63,7 @@ void autoStraight(){
 	wait1Msec(200);
 	liftMan(2);
 	wait1Msec(10);
-	driveBackwardDist(35, 50);	//drive out from the parking zone
+	driveBackwardDist(33, 50);	//drive out from the parking zone
 	wait1Msec(50);
 
 	liftMove(GOAL_LIFT);
@@ -124,15 +123,16 @@ void autoDiag(){
 	writeDebugStreamLine("Function AutoDiag");
 	driveBackwardDist(27, 30);	//drive out from the parking zone
 	wait1Msec(10);
-	turnEuler(90,55,true); //turn right
+	turnEuler(88,50,true); //turn right
 	wait1Msec(10);
 	driveBackwardDist(30, 30); //drive left backwards
 	wait1Msec(10);
 	turnEuler(133,70,false); //turn towards the goal SYNC
 	wait1Msec(10);
-	driveBackwardDist(17, 30); // move towards the goal
+	driveBackwardDist(19, 30); // move towards the goal
 	//score
 	wait1Msec(50);
+
 
 	liftMove(GOAL_LIFT);
 	wait1Msec(100);
@@ -140,8 +140,8 @@ void autoDiag(){
 	driveBackwardDist(5,15); //move closer
 
 	wait1Msec(1000);
-
 	gate(true);
+
 	wait1Msec(100);
 	bananaKnock();
 	wait1Msec(100);
@@ -173,15 +173,19 @@ void autoDiag(){
 	return;
 }
 
-void autoDiagR(){
-	turnEuler(45, 70, true);
-	driveForward(3000, 20);
-	return;
-}
-
 void autoHoriz(){
-	driveBackwardDist(24,20); //drive out of zone
+
+	driveBackwardDist(27,50); //drive out of zone
 	wait1Msec(100);
+	turnEuler(45, 50, true);
+	wait1Msec(50);
+	driveBackwardDist(20,50);
+	wait1Msec(50);
+	turnEuler(135, 50, false);
+	driveBackward(30,50);
+
+
+	/*
 	turnEuler(45,55,true); //turn diagonally towards goal
 	wait1Msec(100);
 	driveBackwardDist(30,20); //drive backwards
@@ -200,6 +204,8 @@ void autoHoriz(){
 	turnEuler(90,55,true); //turn towards pole
 	wait1Msec(100);
 	driveBackwardDist(20,40); //drive against pole and knock it down
+
+	*/
 	return;
 }
 
@@ -208,8 +214,8 @@ void initializeRobot(){
 	calibrateGyro();
 	nMotorEncoder[liftLeft] = 0;		//reset encoder
 	hook(true);			//reset servos
-	banana(false);
 	gate(false);
+	banana(false);
 	//RESET SERVOS
 	return;
 }
@@ -221,10 +227,11 @@ task main()
 	int k = 0;
 	initializeRobot();
 	waitForStart();
+	banana(false);
 	while(true){
 		sonarvalue = USreadDist(Sonar);
 		writeDebugStreamLine("sonar = %d", sonarvalue);
-		if(sonarvalue < 0){
+		if(sonarvalue == -1){
 			//Diagonal center console
 			a++;
 			writeDebugStreamLine("a = %d", a);
@@ -237,7 +244,7 @@ task main()
 			}
 			//The ultrasonic sensor cannot detect diagonal surfaces - therefore, it returns 255 as its default value.
 
-		}else if(sonarvalue < 120){
+		}else if(abs(sonarvalue) < 118){
 			//goal is straight ahead
 			j++;
 			writeDebugStreamLine("j = %d", j);
@@ -246,12 +253,13 @@ task main()
 				autoStraight();
 				break;
 			}
-		}else{
+		}else if(abs(sonarvalue) >= 118){
 			//goal is sideways
 			k++;
 			writeDebugStreamLine("k = %d", k);
 			if(k > 5){
 				writeDebugStreamLine("Sideways, %d", sonarvalue);
+				autoHoriz();
 				break;
 			}
 		}
