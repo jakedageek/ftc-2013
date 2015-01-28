@@ -2,8 +2,8 @@
 #define LIFT_H
 
 #define RESET 230
-#define THIRTY_LIFT 4000
-#define SIXTY_LIFT 6000
+#define THIRTY_LIFT 2500
+#define SIXTY_LIFT 5500
 #define NINETY_LIFT 8000
 #define GOAL_LIFT 11000
 #define MAX_LIFT 12000
@@ -134,9 +134,9 @@ void banana(bool score){
 //knocks the banana down to score easier
 void bananaKnock(){
 	if(bananascore){
-		servo[bananaServo] = servo[bananaServo] - 5;
+		servo[bananaServo] = servo[bananaServo] - 3;
 		wait1Msec(1300);
-		servo[bananaServo] = servo[bananaServo] + 5;
+		servo[bananaServo] = servo[bananaServo] + 3;
 	}else{
 		writeDebugStreamLine("knock failed");
 	}

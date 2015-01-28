@@ -43,14 +43,66 @@ void initializeRobot(){
 }
 
 task main(){
-	initializeRobot();
-	waitForStart();
+	int degrees;						//used for degrees calculation
+	int initAng;						//used for angle sensor calcs
+	int inches = 50;				//inches needed to move on first movement
+	int speed = 60;					//speed going down the ramp
+	float lastTime = 0;				//used for dt calculation
+	float dt = 0;					//dt for integration
+	float g_val = 0;				//gyro value in degrees per second
+	float currPos = 0;				//current turn position
+
+	initializeRobot();		//reset servos
+
+	/* CALIBRATE GYRO */
+	int gyro_zero = 0;
+	for (int i = 0; i < 10; i++) {
+		gyro_zero += SensorValue[gyro];
+		wait1Msec(100);
+	}
+	gyro_zero /= 10;
+
+	/* END CALIBRATE GYRO */
+
+	//waitForStart();
+
+	/* LIFT LIFT BEFORE MOVING OFF RAMP */
 	liftMan(0);
 	wait1Msec(200);
 	liftMan(2);
+
+
 	//drive backwards off the ramp
-	driveBackwardDist(33, 60);
-	/*
+
+	/*DETERMINE ANGLE FOR ANGLE SENSOR */
+	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
+	wait1Msec(100);
+	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+
+
+	/*INITIALIZE CLOCK */
+	lastTime = nSysTime;
+
+	/*GO DOWN RAMP WHILE MONITORING DISTANCE AND ANGLE */
+	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
+		motor[leftDrive] = -speed;
+		motor[rightDrive] = -speed;
+		writeDebugStreamLine("accumulated angle: %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+
+		g_val = SensorValue[gyro] - gyro_zero;
+		dt = nSysTime - lastTime;
+		lastTime = nSysTime;
+		currPos += (dt/1000.) * g_val;
+		//integration end
+
+		writeDebugStreamLine("rotated %f", currPos);
+	}
+	motor[leftDrive] = 0;
+	motor[rightDrive] = 0;
+
+	driveBackwardDist(25, 100);
+	driveBackwardDist(10, 20);
+
 	hook(false);
 	liftMove(SIXTY_LIFT);
 	wait1Msec(1000);
@@ -60,15 +112,13 @@ task main(){
 	wait1Msec(100);
 	gate(false);
 	wait1Msec(50);
-	liftMove(300);
+	liftMove(500);
 
-	turnEuler(40, 50, false);
+	turnEuler(30, 50, false);
 
-	driveForwardDist(80,40);
+	driveForwardDist(80,100);
 
 	turnEuler(180, 50, false);
-
-	*/
 
 	//keep driving
 	//driveBackward(1000);

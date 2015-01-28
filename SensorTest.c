@@ -39,7 +39,7 @@ float dt = 0;					//dt for integration
 float g_val = 0;				//gyro value in degrees per second
 float currPos = 0;				//current turn position
 
-	calibrateGyro();
+calibrateGyro();
 initAng = HTANGreadAccumulatedAngle(HTANG);
 	while(true){
 		sonarvalue = USreadDist(Sonar);
