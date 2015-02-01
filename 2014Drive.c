@@ -1,15 +1,13 @@
 #pragma config(Hubs,  S1, HTServo,  HTMotor,  HTMotor,  HTMotor)
-#pragma config(Hubs,  S2, HTServo,  none,     none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
-#pragma config(Sensor, S2,     ,               sensorI2CMuxController)
+#pragma config(Hubs,  S2, HTSe vo,  none,     none,     none)
 #pragma config(Sensor, S3,     HTSMUX,         sensorI2CCustom)
 #pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
 #pragma config(Motor,  mtr_S1_C2_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C3_1,     intake,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_2,     motorI,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_2,     inRight,       tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop, reversed)
 #pragma config(Servo,  srvo_S1_C1_1,    bananaServo,          tServoStandard)
 #pragma config(Servo,  srvo_S1_C1_2,    gateBack,             tServoStandard)
 #pragma config(Servo,  srvo_S1_C1_3,    servo3,               tServoNone)
@@ -91,11 +89,14 @@ task main(){
 
 		    //intake controls
         if(joy1Btn(CONTROLLER_L1)){
-					motor[intake] = 100;
+					motor[inLeft] = 100;
+					motor[inRight] = 100;
 				}else if(joy1Btn(CONTROLLER_L2)){
-					motor[intake] = -100;
+					motor[inLeft] = -100;
+					motor[inRight] = -100;
 				}else{
-					motor[intake] = 0;
+					motor[inLeft] = 0;
+					motor[inRight] = 0;
 				}
 			}
 	}

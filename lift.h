@@ -1,15 +1,15 @@
 #ifndef LIFT_H
 #define LIFT_H
 
-#define RESET 230
-#define THIRTY_LIFT 2500
-#define SIXTY_LIFT 5500
-#define NINETY_LIFT 8000
-#define GOAL_LIFT 11000
-#define MAX_LIFT 12000
+#define RESET 50
+#define THIRTY_LIFT 2600
+#define SIXTY_LIFT 4700
+#define NINETY_LIFT 6650
+#define GOAL_LIFT 8700
+#define MAX_LIFT 10000
 #define LIFT_UP 100
 #define LIFT_DOWN -5
-#define LIFT_STALL 8
+#define LIFT_STALL 0
 
 void liftMove(int target);
 void liftMan(int up);
