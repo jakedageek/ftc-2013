@@ -86,7 +86,7 @@ void driveForwardDist(int inches, int speed) {
 	}
 	writeDebugStreamLine("------------------------");
 	driveStop(true);
-	wait1Msec(1000);
+	wait1Msec(100);
 	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 }
 
@@ -104,7 +104,7 @@ void driveBackwardDist(int inches, int speed) {
 	}
 	writeDebugStreamLine("------------------------");
 	driveStop(false);
-	wait1Msec(1000);
+	wait1Msec(100);
 	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 }
 
@@ -113,13 +113,13 @@ void driveStop(bool forward) {
 	if(forward == true){
 		motor[leftDrive] = -1;
 		motor[rightDrive] = -1;
-		wait1Msec(100);
+		wait1Msec(50);
 		motor[leftDrive] = 0;
 		motor[rightDrive] = 0;
 	}else{
-		motor[leftDrive] = 1;
 		motor[rightDrive] = 1;
-		wait1Msec(100);
+		motor[leftDrive] = 1;
+		wait1Msec(50);
 		motor[leftDrive] = 0;
 		motor[rightDrive] = 0;
 	}

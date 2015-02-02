@@ -31,37 +31,135 @@
 const tMUXSensor HTANG = msensor_S3_1;
 const tMUXSensor Sonar = msensor_S3_2;
 
-task main()
+//RAMP AUTONOMOUS
 
-{
-int initAng;
-int sonarvalue;
-float lastTime = nSysTime;				//used for dt calculation
-float dt = 0;					//dt for integration
-float g_val = 0;				//gyro value in degrees per second
-float currPos = 0;				//current turn position
-
-initAng = HTANGreadAccumulatedAngle(HTANG);
+void initializeRobot(){
 	calibrateGyro();
 	nMotorEncoder[liftLeft] = 0;		//reset encoder
 	hook(true);			//reset servos
 	banana(false);
 	gate(false);
 	servo[hookFront] = 254;
+	//RESET SERVOS
+	return;
+}
+
+task main(){
+	int degrees;						//used for degrees calculation
+	int initAng;						//used for angle sensor calcs
+	int inches = 50;				//inches needed to move on first movement
+	int speed = 30;					//speed going down the ramp
+	float lastTime = 0;				//used for dt calculation
+	float dt = 0;					//dt for integration
+	float g_val = 0;				//gyro value in degrees per second
+	float currPos = 0;				//current turn position
+
+	initializeRobot();		//reset servos
+
+	/* CALIBRATE GYRO */
+	int gyro_zero = 0;
+	for (int i = 0; i < 10; i++) {
+		gyro_zero += SensorValue[gyro];
+		wait1Msec(100);
+	}
+	gyro_zero /= 10;
+
+	/* END CALIBRATE GYRO */
+
+	//waitForStart();
+
+	/* LIFT LIFT BEFORE MOVING OFF RAMP */
+	liftMan(0);
+	wait1Msec(200);
+	liftMan(2);
 
 
-	while(true){
-		sonarvalue = USreadDist(Sonar);
-		writeDebugStreamLine("sonar = %d", sonarvalue);
+	//drive backwards off the ramp
+
+	/*DETERMINE ANGLE FOR ANGLE SENSOR */
+	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
+	wait1Msec(100);
+	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+
+
+	/*INITIALIZE CLOCK */
+	lastTime = nSysTime;
+
+	/*GO DOWN RAMP WHILE MONITORING DISTANCE AND ANGLE */
+	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
+		motor[leftDrive] = -speed;
+		motor[rightDrive] = -speed;
 		writeDebugStreamLine("accumulated angle: %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 
-		g_val = gyroValue();
+		g_val = SensorValue[gyro] - gyro_zero;
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
 		currPos += (dt/1000.) * g_val;
 		//integration end
+
 		writeDebugStreamLine("rotated %f", currPos);
 	}
+	motor[leftDrive] = 0;
+	motor[rightDrive] = 0;
 
+	wait1Msec(100);
+
+	driveBackwardDist(25, 100);
+
+	driveBackwardDist(10, 20);
+
+	hook(false);
+	liftMove(SIXTY_LIFT);
+	wait1Msec(1000);
+	gate(true);
+	wait1Msec(100);
+	bananaKnock();
+	wait1Msec(100);
+	gate(false);
+	wait1Msec(50);
+	liftMove(500);
+
+	turnEuler(180, 50, true);
+
+	driveForwardDist(14, 50);
+
+	servo[hookFront] = 58;
+
+	wait1Msec(700);
+
+	turnEuler(30, 40, false);
+
+	driveBackwardDist(105, 100);
+
+	turnEuler(60, 50, false);
+
+	driveBackwardDist(10,50);
+
+	liftMove(RESET);
+
+	/*
+	turnEuler(30, 50, false);
+
+	driveForwardDist(80,100);
+
+	turnEuler(180, 50, false);
+
+	liftMove(RESET);
+
+	*/
+
+	//keep driving
+	//driveBackward(1000);
+	//stop infront of the tube67
+	//driveStop();
+	//hook the tube
+	//hook(false);
+	//raise the arm
+	//liftMove(SIXTY_LIFT, true);
+	//open the gate
+	//turn
+	//turnEuler(35, 35, false);
+	//drive forward to the goal
+	//driveForward(4000);
 
 }
