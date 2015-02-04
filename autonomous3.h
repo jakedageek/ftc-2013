@@ -8,9 +8,12 @@ void driveBackward(int millis, int speed);
 void driveBackward(int speed);
 void driveForwardDist(int inches, int speed);
 void driveBackwardDist(int inches, int speed);
+void driveForwardDistAC(int inches, float speed);
+void driveBackwardDistAC(int inches, float speed);
 void driveStop(bool forward);
 void turnEuler(int degrees, int speed, bool left);
 int gyroValue();
+int gyroValueR();
 int gyro_zero;
 
 #include "util.h"
@@ -52,26 +55,30 @@ void calibrateGyro() {
 	writeDebugStreamLine("%d", gyro_zero);
 }
 
-//self-explanatory - for use in autonomous
+//drive for a certain time at a certain speed
 void driveForward(int millis, int speed) {
 	driveForward(speed);
 	wait1Msec(millis);
 	driveStop(true);
 }
 
+//drive at a certain speed
 void driveForward(int speed) {
 	motor[leftDrive] = speed;
 	motor[rightDrive] = speed;
 }
 
+//drive back for a certain time at a certain speed
 void driveBackward(int millis, int speed) {
 	driveForward(millis, -speed);
 }
 
+//drive back at a certain speed
 void driveBackward(int speed) {
 	driveForward(-speed);
 }
 
+//drive forward for a specified distance at a certain speed
 void driveForwardDist(int inches, int speed) {
 	//driving forward using the angle sensor
 	int degrees;
@@ -90,6 +97,7 @@ void driveForwardDist(int inches, int speed) {
 	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 }
 
+//drive backward for a specified distance at a certain speed
 void driveBackwardDist(int inches, int speed) {
 	//driving backward using the angle sensor
 	int degrees;
@@ -108,18 +116,101 @@ void driveBackwardDist(int inches, int speed) {
 	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 }
 
+//drive forward for a specified distance at a certain speed while maintaining the initial angle
+void driveForwardDistAC(int inches, float speed) {
+	//driving forward using the angle sensor
+	int degrees;
+	int initAng;
+
+	//managing the angle
+	float factor = 1;
+	float lastTime = nSysTime;				//used for dt calculation
+	float dt = 0;											//dt for integration
+	float g_val = 0;									//gyro value in degrees per second
+	float currPos = 0;								//current turn position
+
+	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
+	wait1Msec(100);
+	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
+		//gyro code
+		g_val = gyroValueR();
+		dt = nSysTime - lastTime;
+		lastTime = nSysTime;
+		currPos += (dt/1000.) * g_val;
+
+		if(currPos > 0){
+			motor[leftDrive] = speed - (abs(currPos) * factor);
+			motor[rightDrive] = speed;
+		}else if(currPos < 0){
+			motor[leftDrive] = speed;
+			motor[rightDrive] = speed - (abs(currPos) * factor);
+		}else{
+			motor[leftDrive] = speed;
+			motor[rightDrive] = speed;
+		}
+
+		writeDebugStreamLine("accumulated angle = %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+	}
+	writeDebugStreamLine("------------------------");
+	driveStop(true);
+	wait1Msec(100);
+	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+}
+
+//drive backward for a specified distance at a certain speed while maintaining the initial angle
+void driveBackwardDistAC(int inches, float speed) {
+	//driving forward using the angle sensor
+	int degrees;
+	int initAng;
+
+	//managing the angle
+	float factor = 5;
+	float lastTime = nSysTime;				//used for dt calculation
+	float dt = 0;											//dt for integration
+	float g_val = 0;									//gyro value in degrees per second
+	float currPos = 0;								//current turn position
+
+	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
+	wait1Msec(100);
+	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
+		//gyro code
+		g_val = gyroValueR();
+		dt = nSysTime - lastTime;
+		lastTime = nSysTime;
+		currPos += (dt/1000.) * g_val;
+
+		writeDebugStreamLine("Turned %f", currPos);
+
+		if(currPos > 0){
+			motor[leftDrive] = -speed;
+			motor[rightDrive] = -speed + (abs(currPos) * factor);
+			writeDebugStreamLine("rightDrive = %f", -speed + (abs(currPos) * factor));
+		}else if(currPos < 0){
+			motor[leftDrive] = -speed + (abs(currPos) * factor);
+			motor[rightDrive] = -speed;
+			writeDebugStreamLine("leftDrive = %f", -speed + (abs(currPos) * factor));
+		}else{
+			motor[leftDrive] = -speed;
+			motor[rightDrive] = -speed;
+			writeDebugStreamLine("straight");
+		}
+
+		writeDebugStreamLine("accumulated angle = %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+	}
+	writeDebugStreamLine("------------------------");
+	driveStop(true);
+	wait1Msec(100);
+	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+}
+
 void driveStop(bool forward) {
 	//braking is a lot quicker when something is sent to the motors
 	if(forward == true){
-		motor[leftDrive] = -1;
-		motor[rightDrive] = -1;
-		wait1Msec(50);
 		motor[leftDrive] = 0;
 		motor[rightDrive] = 0;
 	}else{
-		motor[rightDrive] = 1;
-		motor[leftDrive] = 1;
-		wait1Msec(50);
 		motor[leftDrive] = 0;
 		motor[rightDrive] = 0;
 	}
@@ -283,6 +374,8 @@ int gyroValue() {
 	return abs(SensorValue[gyro] - gyro_zero);
 }
 
-
+int gyroValueR() {
+	return SensorValue[gyro] - gyro_zero;
+}
 
 #endif

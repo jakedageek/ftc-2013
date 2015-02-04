@@ -45,14 +45,17 @@ void initializeRobot(){
 }
 
 task main(){
-	int degrees;						//used for degrees calculation
-	int initAng;						//used for angle sensor calcs
-	int inches = 50;				//inches needed to move on first movement
-	int speed = 30;					//speed going down the ramp
-	float lastTime = 0;				//used for dt calculation
+	//int degrees;						//used for degrees calculation
+	//int initAng;						//used for angle sensor calcs
+	//int inches = 50;				//inches needed to move on first movement
+	//int speed = 30;					//speed going down the ramp
+	//float lastTime = 0;				//used for dt calculation
+
+	/*
 	float dt = 0;					//dt for integration
 	float g_val = 0;				//gyro value in degrees per second
 	float currPos = 0;				//current turn position
+	*/
 
 	initializeRobot();		//reset servos
 
@@ -77,20 +80,20 @@ task main(){
 	//drive backwards off the ramp
 
 	/*DETERMINE ANGLE FOR ANGLE SENSOR */
-	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
-	wait1Msec(100);
-	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+	//initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
+	//wait1Msec(100);
+	//degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
 
 
 	/*INITIALIZE CLOCK */
-	lastTime = nSysTime;
+	//lastTime = nSysTime;
 
 	/*GO DOWN RAMP WHILE MONITORING DISTANCE AND ANGLE */
+	/*
 	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
 		motor[leftDrive] = -speed;
 		motor[rightDrive] = -speed;
 		writeDebugStreamLine("accumulated angle: %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
-
 		g_val = SensorValue[gyro] - gyro_zero;
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
@@ -101,6 +104,9 @@ task main(){
 	}
 	motor[leftDrive] = 0;
 	motor[rightDrive] = 0;
+	*/
+
+	driveBackwardDist(50,30);
 
 	wait1Msec(100);
 
@@ -123,7 +129,7 @@ task main(){
 
 	driveForwardDist(14, 50);
 
-	servo[hookFront] = 58;
+	servo[hookFront] = 56;
 
 	wait1Msec(700);
 
