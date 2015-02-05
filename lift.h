@@ -134,9 +134,9 @@ void banana(bool score){
 //knocks the banana down to score easier
 void bananaKnock(){
 	if(bananascore){
-		servo[bananaServo] = servo[bananaServo] - 3;
+		servo[bananaServo] = servo[bananaServo] - 4;
 		wait1Msec(1300);
-		servo[bananaServo] = servo[bananaServo] + 3;
+		servo[bananaServo] = servo[bananaServo] + 4;
 	}else{
 		writeDebugStreamLine("knock failed");
 	}

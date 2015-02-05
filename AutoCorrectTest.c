@@ -44,6 +44,6 @@ void initializeRobot(){
 task main()
 {
 	initializeRobot();
-	driveBackwardDist(80, 40);
+	driveBackwardDistAC(80, 40);
 
 }
