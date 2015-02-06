@@ -70,7 +70,7 @@ task main(){
 
 	/* END CALIBRATE GYRO */
 
-	//waitForStart();
+	waitForStart();
 
 	/* LIFT LIFT BEFORE MOVING OFF RAMP */
 	liftMan(0);

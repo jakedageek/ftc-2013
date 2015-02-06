@@ -47,6 +47,8 @@ task main()
 {
 	initializeRobot();		//reset servos
 
+	waitForStart();
+
 	/* LIFT LIFT BEFORE MOVING OFF PARKZONE */
 	liftMan(0);
 	wait1Msec(200);
