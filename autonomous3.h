@@ -233,7 +233,7 @@ void driveStop(bool forward, int speed) {
 			speed = speed - 10;
 			motor[leftDrive] = speed;
 			motor[rightDrive] = speed;
-			wait1Msec(10);
+			wait1Msec(50);
 		}
 		motor[leftDrive] = 0;
 		motor[rightDrive] = 0;
@@ -245,7 +245,7 @@ void driveStop(bool forward, int speed) {
 			speed = speed - 10;
 			motor[leftDrive] = -speed;
 			motor[rightDrive] = -speed;
-			wait1Msec(10);
+			wait1Msec(50);
 		}
 		motor[leftDrive] = 0;
 		motor[rightDrive] = 0;

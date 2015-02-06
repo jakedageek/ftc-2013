@@ -12,13 +12,13 @@
 #pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop, reversed)
 #pragma config(Servo,  srvo_S1_C1_1,    bananaServo,          tServoStandard)
 #pragma config(Servo,  srvo_S1_C1_2,    gateBack,             tServoStandard)
-#pragma config(Servo,  srvo_S1_C1_3,    servo3,               tServoNone)
+#pragma config(Servo,  srvo_S1_C1_3,    hookFront,            tServoStandard)
 #pragma config(Servo,  srvo_S1_C1_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C1_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C1_6,    servo6,               tServoNone)
 #pragma config(Servo,  srvo_S2_C1_1,    hookRight,            tServoStandard)
 #pragma config(Servo,  srvo_S2_C1_2,    hookLeft,             tServoStandard)
-#pragma config(Servo,  srvo_S2_C1_3,    hookFront,            tServoStandard)
+#pragma config(Servo,  srvo_S2_C1_3,    servo9,               tServoNone)
 #pragma config(Servo,  srvo_S2_C1_4,    servo10,              tServoNone)
 #pragma config(Servo,  srvo_S2_C1_5,    servo11,              tServoNone)
 #pragma config(Servo,  srvo_S2_C1_6,    servo12,              tServoNone)
@@ -58,6 +58,8 @@ task main()
 	//servo[bananaServo] = 204;
 	gate(false);
 
+	servo[hookFront] = 207;
+
 	wait1Msec(2000);
 	while(true){
 	      if(joystick.joy1_TopHat == 6){
@@ -70,8 +72,8 @@ task main()
 					//writeDebugStreamLine("Banana false");
 				}else{
 					//writeDebugStreamLine("else statement");
-				}
 
+				}
 				if(joy1Btn(CONTROLLER_A)){
 					liftMove(SIXTY_LIFT);
 				}else if(joy1Btn(CONTROLLER_B)){

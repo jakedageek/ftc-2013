@@ -38,7 +38,7 @@ void initializeRobot(){
 	hook(true);			//reset servos
 	banana(false);
 	gate(false);
-	servo[hookFront] = 254;
+	servo[hookFront] = 207;
 	//RESET SERVOS
 	return;
 }
@@ -71,7 +71,7 @@ task main()
 	wait1Msec(50);
 	liftMove(500);
 
-	turnEuler(215, 50, true);
+	turnEuler(215, 60, true);
 
 	driveForwardDist(15, 30);
 
@@ -81,10 +81,10 @@ task main()
 
 	turnEuler(25, 30, false);
 
-	driveBackwardDistAC(95, 100);
+	driveBackwardDistAC(105, 100);
 
-	turnEuler(65, 30, false);
+	turnEuler(65, 60, false);
 
-	driveBackwardDist(5,30);
+	driveBackwardDist(8,30);
 
 }
