@@ -36,9 +36,10 @@ void initializeRobot(){
 	calibrateGyro();
 	nMotorEncoder[liftLeft] = 0;		//reset encoder
 	hook(true);			//reset servos
-	banana(false);
+	//banana(false);
+	servo[bananaServo] = 187;
 	gate(false);
-	servo[hookFront] = 207;
+	servo[hookFront] = 196;
 	//RESET SERVOS
 	return;
 }
@@ -58,7 +59,7 @@ task main()
 
 	turnEuler(33, 50, false);
 
-	driveBackwardDistAC(62, 100);
+	driveBackwardDistAC(63, 100);
 
 	driveBackwardDist(17, 20);
 
@@ -77,7 +78,7 @@ task main()
 
 	driveForwardDist(15, 30);
 
-	servo[hookFront] = 56;
+	servo[hookFront] = 51;
 
 	wait1Msec(700);
 
@@ -87,6 +88,6 @@ task main()
 
 	turnEuler(65, 60, false);
 
-	driveBackwardDist(8,30);
+	driveBackwardDist(10,30);
 
 }

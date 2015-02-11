@@ -30,8 +30,6 @@
 const tMUXSensor HTANG = msensor_S3_1;
 const tMUXSensor Sonar = msensor_S3_2;
 
-//RAMP AUTONOMOUS
-
 void initializeRobot(){
 	calibrateGyro();
 	nMotorEncoder[liftLeft] = 0;		//reset encoder
@@ -55,47 +53,8 @@ task main()
 	wait1Msec(200);
 	liftMan(2);
 
-	driveBackwardDist(20, 40);
+	driveBackwardDist(45, 100);
 
-	turnEuler(33, 50, false);
 
-	driveBackwardDist(42, 70);
-
-	wait1Msec(200);
-
-	turnEuler(25, 50, true);
-
-	driveBackwardDist(34, 70);
-
-	driveBackwardDist(18, 20);
-
-	hook(false);
-	liftMove(THIRTY_LIFT);
-	wait1Msec(1000);
-	gate(true);
-	wait1Msec(100);
-	bananaKnock();
-	wait1Msec(100);
-	gate(false);
-	wait1Msec(50);
-	liftMove(500);
-
-	turnEuler(110, 60, true);
-
-	driveForwardDist(10, 30);
-
-	servo[hookFront] = 51;
-
-	wait1Msec(700);
-
-	driveBackwardDist(10, 30);
-
-	turnEuler(120, 60, false);
-
-	driveForwardDistAC(90, 100);
-
-	turnEuler(65, 60, false);
-
-	driveForwardDist(10,30);
 
 }

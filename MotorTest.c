@@ -54,11 +54,12 @@ task main()
 
 
 	hook(true);
-	banana(false);
+	//banana(false);
+	servo[bananaServo] = 196;
 	//servo[bananaServo] = 204;
 	gate(false);
 
-	servo[hookFront] = 207;
+	servo[hookFront] = 196;
 
 	wait1Msec(2000);
 	while(true){
@@ -110,13 +111,12 @@ task main()
 				}else if(joy1Btn(CONTROLLER_L2)){
 					motor[inLeft] = -100;
 					motor[inRight] = -100;
-				}
-				if(joy1Btn(CONTROLLER_L3)){
+				}else{
 					motor[inLeft] = 0;
 					motor[inRight] = 0;
 				}
 
-				motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
-        motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
+				//motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
+        //motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
 			}
 }

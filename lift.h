@@ -2,14 +2,14 @@
 #define LIFT_H
 
 #define RESET 200
-#define THIRTY_LIFT 2600
-#define SIXTY_LIFT 4600
-#define NINETY_LIFT 6600
-#define GOAL_LIFT 8700
-#define MAX_LIFT 10000
+#define THIRTY_LIFT 1300
+#define SIXTY_LIFT 2300
+#define NINETY_LIFT 3300
+#define GOAL_LIFT 4350
+#define MAX_LIFT 5000
 #define LIFT_UP 100
 #define LIFT_DOWN -10
-#define LIFT_STALL 2
+#define LIFT_STALL 10
 
 void liftMove(int target);
 void liftMan(int up);
@@ -92,7 +92,7 @@ void hook(bool up){
 void gate(bool open){
 	if(open == true){
 		//hook up positions
-		servo[gateBack] = 180; //calibrate
+		servo[gateBack] = 50; //calibrate
 	}else{
 		servo[gateBack] = 0; //calibrate
 	}
@@ -101,13 +101,13 @@ void gate(bool open){
 void banana(bool score){
 	if(score == true){
 		//banana score
-		if(servo[bananaServo] > 129){
-			while(servo[bananaServo] > 129){
+		if(servo[bananaServo] > 116){
+			while(servo[bananaServo] > 116){
 				servo[bananaServo] = servo[bananaServo] - 1;
 				wait1Msec(10);
 			}
 		}else{
-			while(servo[bananaServo] < 129){
+			while(servo[bananaServo] < 116){
 				servo[bananaServo] = servo[bananaServo] + 1;
 				wait1Msec(10);
 			}
@@ -115,13 +115,13 @@ void banana(bool score){
 		//servo[bananaServo] = 124; //calibrate
 		bananascore = true;
 	}else{
-		if(servo[bananaServo] > 208){
-			while(servo[bananaServo] > 208){
+		if(servo[bananaServo] > 196){
+			while(servo[bananaServo] > 196){
 				servo[bananaServo] = servo[bananaServo] - 1;
 				wait1Msec(10);
 			}
 		}else{
-			while(servo[bananaServo] < 208){
+			while(servo[bananaServo] < 196){
 				servo[bananaServo] = servo[bananaServo] + 1;
 				wait1Msec(10);
 			}
