@@ -29,6 +29,8 @@ void liftMove(int target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			motor[liftLeft] = LIFT_UP;
 			motor[liftRight] = LIFT_UP;
+		    motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2)) / 2;
+        	motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2)) / 2;
 		}
 		motor[liftLeft] = LIFT_STALL;
 		motor[liftRight] = LIFT_STALL;
@@ -41,6 +43,8 @@ void liftMove(int target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			motor[liftLeft] = LIFT_DOWN;
 			motor[liftRight] = LIFT_DOWN;
+			motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2)) / 2;
+        	motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2)) / 2;
 		}
 		motor[liftLeft] = LIFT_STALL;
 		motor[liftRight] = LIFT_STALL;
