@@ -1,14 +1,14 @@
 #ifndef LIFT_H
 #define LIFT_H
 
-#define RESET 200
+#define RESET 50
 #define THIRTY_LIFT 1300
 #define SIXTY_LIFT 2300
 #define NINETY_LIFT 3300
 #define GOAL_LIFT 4350
 #define MAX_LIFT 5000
 #define LIFT_UP 100
-#define LIFT_DOWN -10
+#define LIFT_DOWN -3
 #define LIFT_STALL 10
 
 void liftMove(int target);
@@ -89,7 +89,7 @@ void hook(bool up){
 		servo[hookRight] = 49; //calibrate
 	}else{
 		servo[hookLeft] = 255; //calibrate
-		servo[hookRight] = 6; //calibrate
+		servo[hookRight] =13; //calibrate
 	}
 }
 

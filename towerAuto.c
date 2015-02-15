@@ -1,16 +1,18 @@
 #pragma config(Hubs,  S1, HTServo,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S2, HTServo,  none,     none,     none)
+#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S2,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S3,     HTSMUX,         sensorI2CCustom)
 #pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
 #pragma config(Motor,  mtr_S1_C2_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C3_1,     intake,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_2,     motorI,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop, reversed)
+#pragma config(Motor,  mtr_S1_C3_2,     inRight,       tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop, reversed)
 #pragma config(Servo,  srvo_S1_C1_1,    bananaServo,          tServoStandard)
 #pragma config(Servo,  srvo_S1_C1_2,    gateBack,             tServoStandard)
-#pragma config(Servo,  srvo_S1_C1_3,    servo3,               tServoNone)
+#pragma config(Servo,  srvo_S1_C1_3,    hookFront,            tServoStandard)
 #pragma config(Servo,  srvo_S1_C1_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C1_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C1_6,    servo6,               tServoNone)
@@ -63,13 +65,14 @@ void autoStraight(){
 	wait1Msec(200);
 	liftMan(2);
 	wait1Msec(10);
-	driveBackwardDist(33, 50);	//drive out from the parking zone
+	driveBackwardDist(30, 30);	//drive out from the parking zone
 	wait1Msec(50);
+	turnEuler(5,50,false);
 
 	liftMove(GOAL_LIFT);
 	wait1Msec(100);
 
-	driveBackwardDist(5,15); //move closer
+	driveBackwardDist(8,15); //move closer
 
 	wait1Msec(1000);
 
@@ -84,7 +87,7 @@ void autoStraight(){
 
 	wait1Msec(500);
 
-	liftMove(300);
+	liftMove(RESET);
 
 	turnEuler(90,55,false); //turn towards pole
 	wait1Msec(10);
@@ -92,7 +95,6 @@ void autoStraight(){
 	turnEuler(90,55,true); //turn towards pole
 	driveBackwardDist(30,40); //drive against pole and knock it down
 	wait1Msec(10);
-	liftMove(RESET);
 
 /*
 	int a = 0;
@@ -121,15 +123,15 @@ void autoDiag(){
 	wait1Msec(200);
 	liftMan(2);
 	writeDebugStreamLine("Function AutoDiag");
-	driveBackwardDist(27, 30);	//drive out from the parking zone
+	driveBackwardDist(10, 30);	//drive out from the parking zone
 	wait1Msec(10);
-	turnEuler(88,50,true); //turn right
+	turnEuler(45,70,true); //turn left
 	wait1Msec(10);
-	driveBackwardDist(30, 30); //drive left backwards
+	driveBackwardDist(32, 30); //drive left backwards
 	wait1Msec(10);
-	turnEuler(133,70,false); //turn towards the goal SYNC
+	turnEuler(95,70,false); //turn towards the goal SYNC
 	wait1Msec(10);
-	driveBackwardDist(19, 30); // move towards the goal
+	driveBackwardDist(7, 30); // move towards the goal
 	//score
 	wait1Msec(50);
 
@@ -137,7 +139,7 @@ void autoDiag(){
 	liftMove(GOAL_LIFT);
 	wait1Msec(100);
 
-	driveBackwardDist(5,15); //move closer
+	driveBackwardDist(8,15); //move closer
 
 	wait1Msec(1000);
 	gate(true);
@@ -154,36 +156,58 @@ void autoDiag(){
 
 	liftMove(RESET);
 
-	driveForwardDist(10,50);
+	driveForwardDist(5,50);
 
-	/*
+
 	liftMan(2);
 
 	//pole
 
-	turnEuler(90,55,false); //turn towards pole
-	wait1Msec(10);
-	driveBackwardDist(14, 50); //drive towards pole
 	turnEuler(90,55,true); //turn towards pole
-	driveBackwardDist(30,40); //drive against pole and knock it down
 	wait1Msec(10);
-	liftMove(RESET);
+	driveForwardDist(17, 50); //drive towards pole
+	turnEuler(95,55,true); //turn towards pole
+	driveForwardDist(45,40); //drive against pole and knock it down
+	turnEuler(30,55,false);
+	driveBackwardDist(20,40);
+	wait1Msec(10);
 
-	*/
+
 	return;
 }
 
 void autoHoriz(){
 
-	driveBackwardDist(27,50); //drive out of zone
+	driveBackwardDist(20,50); //drive out of zone
 	wait1Msec(100);
-	turnEuler(45, 50, true);
+	turnEuler(35, 50, true);
 	wait1Msec(50);
-	driveBackwardDist(20,50);
+	driveBackwardDistAC(43,50);
 	wait1Msec(50);
-	turnEuler(135, 50, false);
-	driveBackward(30,50);
+	turnEuler(120, 50, false);
+	driveBackward(10,50);
 
+	liftMove(GOAL_LIFT);
+	wait1Msec(100);
+
+	driveBackwardDist(8,15); //move closer
+
+	wait1Msec(1000);
+	gate(true);
+
+	wait1Msec(100);
+	bananaKnock();
+	wait1Msec(100);
+	gate(false);
+	wait1Msec(50);
+
+	driveForwardDist(5,15); //move closer
+
+	wait1Msec(500);
+
+	liftMove(RESET);
+
+	driveForwardDist(5,50);
 
 	/*
 	turnEuler(45,55,true); //turn diagonally towards goal
@@ -226,12 +250,12 @@ task main()
 	int j = 0;
 	int k = 0;
 	initializeRobot();
-	waitForStart();
+	//waitForStart();
 	banana(false);
 	while(true){
 		sonarvalue = USreadDist(Sonar);
 		writeDebugStreamLine("sonar = %d", sonarvalue);
-		if(sonarvalue == -1){
+		if(sonarvalue == 255){
 			//Diagonal center console
 			a++;
 			writeDebugStreamLine("a = %d", a);
@@ -244,7 +268,7 @@ task main()
 			}
 			//The ultrasonic sensor cannot detect diagonal surfaces - therefore, it returns 255 as its default value.
 
-		}else if(abs(sonarvalue) < 118){
+		}else if(abs(sonarvalue) < 118 && abs(sonarvalue) != 0){
 			//goal is straight ahead
 			j++;
 			writeDebugStreamLine("j = %d", j);

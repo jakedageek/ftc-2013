@@ -402,6 +402,13 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 		writeDebugStreamLine("rotated %f", currPos);
 		wait1Msec(10 - dt);
 	}
+	if(currPos - degrees > 10){
+		if(left == true){
+			turnEuler(currPos-degrees, speed, false);
+		}else{
+			turnEuler(currPos-degrees, speed, true);
+		}
+	}
 	writeDebugStreamLine("done.");
 	writeDebugStreamLine("----------------------------");
 }
