@@ -2,10 +2,10 @@
 #define LIFT_H
 
 #define RESET 50
-#define THIRTY_LIFT 1300
-#define SIXTY_LIFT 2300
-#define NINETY_LIFT 3300
-#define GOAL_LIFT 4350
+#define THIRTY_LIFT 1400
+#define SIXTY_LIFT 2350
+#define NINETY_LIFT 3400
+#define GOAL_LIFT 4550
 #define MAX_LIFT 5000
 #define LIFT_UP 100
 #define LIFT_DOWN -3

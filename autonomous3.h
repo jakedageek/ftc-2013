@@ -1,5 +1,5 @@
-#ifndef AUTONOMOUS_H
-#define AUTONOMOUS_H
+#ifndef AUTONOMOUS3_H
+#define AUTONOMOUS3_H
 
 void calibrateGyro();
 void driveForward(int millis, int speed);
@@ -10,6 +10,7 @@ void driveForwardDist(int inches, int speed);
 void driveBackwardDist(int inches, int speed);
 void driveForwardDistAC(int inches, float speed);
 void driveBackwardDistAC(int inches, float speed);
+void driveBackwardUltra(int speed, int ultra);
 void driveStop(bool forward, int speed);
 void driveStop(bool forward);
 void turnEuler(int degrees, int speed, bool left);
@@ -77,6 +78,14 @@ void driveBackward(int millis, int speed) {
 //drive back at a certain speed
 void driveBackward(int speed) {
 	driveForward(-speed);
+}
+
+void driveBackwardUltra(int speed, int ultra){
+	while(USreadDist(Sonar) > ultra){
+		motor[leftDrive] = -speed;
+		motor[rightDrive] = -speed;
+	}
+	driveStop(true, speed);
 }
 
 //drive forward for a specified distance at a certain speed

@@ -26,46 +26,30 @@
 #include "util.h"
 #include "lift.h"
 #include "autonomous3.h"
+#include "autonomousf.h"
 
 const tMUXSensor HTANG = msensor_S3_1;
 const tMUXSensor Sonar = msensor_S3_2;
-
-//RAMP AUTONOMOUS
-
-void initializeRobot(){
-	calibrateGyro();
-	nMotorEncoder[liftLeft] = 0;		//reset encoder
-	hook(true);			//reset servos
-	//banana(false);
-	servo[bananaServo] = 187;
-	gate(false);
-	servo[hookFront] = 196;
-	//RESET SERVOS
-	return;
-}
 
 task main()
 {
 	initializeRobot();		//reset servos
 
-	waitForStart();
+	//waitForStart();
 
 	/* LIFT LIFT BEFORE MOVING OFF PARKZONE */
-	liftMan(0);
-	wait1Msec(200);
-	liftMan(2);
 
 	driveBackwardDist(20, 40);
 
-	turnEuler(33, 50, false);
+	turnEuler(33, 60, false);
 
-	driveBackwardDist(42, 70);
+	driveBackwardDistAC(42, 70);
 
 	wait1Msec(200);
 
-	turnEuler(25, 50, true);
+	turnEuler(33, 60, true);
 
-	driveBackwardDist(34, 70);
+	driveBackwardDistAC(34, 70);
 
 	driveBackwardDist(18, 20);
 
@@ -82,9 +66,9 @@ task main()
 
 	turnEuler(110, 60, true);
 
-	driveForwardDist(10, 30);
+	driveForwardDist(5, 30);
 
-	servo[hookFront] = 51;
+	servo[hookFront] = 235;
 
 	wait1Msec(700);
 

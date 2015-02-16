@@ -58,6 +58,7 @@ task main()
 	servo[bananaServo] = 196;
 	//servo[bananaServo] = 204;
 	gate(false);
+	nMotorEncoder[liftLeft] = 0;
 
 	servo[hookFront] = 196;
 

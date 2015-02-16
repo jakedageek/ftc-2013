@@ -54,7 +54,7 @@ task main(){
 	hook(true);			//reset servos
 	banana(false);
 	gate(false);
-	servo[hookFront] = 196;
+	servo[hookFront] = 50;
 	//servo[bananaServo] = 200;
 	while(true){
     	// Drive controls

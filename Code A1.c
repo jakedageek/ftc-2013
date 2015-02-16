@@ -54,19 +54,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-/* ---------------------------------------------------------------------------------------------------------------- */
-/* INITIALIZATION							 																																											*/
-/* ---------------------------------------------------------------------------------------------------------------- */
-
-void initializeRobot(){
-	calibrateGyro();
-	nMotorEncoder[liftLeft] = 0;		//reset encoder
-	hook(true);			//reset servos
-	gate(false);
-	banana(false);
-	//RESET SERVOS
-	return;
-}
 
 task main()
 {
@@ -86,7 +73,6 @@ task main()
 			if(a > 10){
 				writeDebugStreamLine("Diagonal, %d", sonarvalue);
 				autoDiag();
-				wait1Msec(2000);
 				break;
 			}
 			//The ultrasonic sensor cannot detect diagonal surfaces - therefore, it returns 255 as its default value.
