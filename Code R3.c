@@ -27,23 +27,12 @@
 #include "util.h"
 #include "lift.h"
 #include "autonomous3.h"
+#include "autonomousf.h"
 
 const tMUXSensor HTANG = msensor_S3_1;
 const tMUXSensor Sonar = msensor_S3_2;
 
 //RAMP AUTONOMOUS
-
-void initializeRobot(){
-	calibrateGyro();
-	nMotorEncoder[liftLeft] = 0;		//reset encoder
-	hook(true);			//reset servos
-	//banana(false);
-	servo[bananaServo] = 187;
-	gate(false);
-	servo[hookFront] = 196;
-	//RESET SERVOS
-	return;
-}
 
 task main(){
 	/*
@@ -61,113 +50,7 @@ task main(){
 
 	initializeRobot();		//reset servos
 
-	/* CALIBRATE GYRO */
-	int gyro_zero = 0;
-	for (int i = 0; i < 10; i++) {
-		gyro_zero += SensorValue[gyro];
-		wait1Msec(100);
-	}
-	gyro_zero /= 10;
-
-	/* END CALIBRATE GYRO */
-
 	waitForStart();
 
-	/* LIFT LIFT BEFORE MOVING OFF RAMP */
-	liftMan(0);
-	wait1Msec(200);
-	liftMan(2);
-
-
-	//drive backwards off the ramp
-
-	/*DETERMINE ANGLE FOR ANGLE SENSOR */
-	//initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
-	//wait1Msec(100);
-	//degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
-
-
-	/*INITIALIZE CLOCK */
-	//lastTime = nSysTime;
-
-	/*GO DOWN RAMP WHILE MONITORING DISTANCE AND ANGLE */
-	/*
-	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
-		motor[leftDrive] = -speed;
-		motor[rightDrive] = -speed;
-		writeDebugStreamLine("accumulated angle: %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
-		g_val = SensorValue[gyro] - gyro_zero;
-		dt = nSysTime - lastTime;
-		lastTime = nSysTime;
-		currPos += (dt/1000.) * g_val;
-		//integration end
-
-		writeDebugStreamLine("rotated %f", currPos);
-	}
-	motor[leftDrive] = 0;
-	motor[rightDrive] = 0;
-	*/
-
-	driveBackwardDist(50,30);
-
-	wait1Msec(100);
-
-	driveBackwardDist(22, 100);
-
-	driveBackwardDist(17, 20);
-
-	hook(false);
-	liftMove(SIXTY_LIFT);
-	wait1Msec(1000);
-	gate(true);
-	wait1Msec(100);
-	bananaKnock();
-	wait1Msec(100);
-	gate(false);
-	wait1Msec(50);
-	liftMove(500);
-
-	turnEuler(190, 50, true);
-
-	driveForwardDist(10, 50);
-
-	servo[hookFront] = 51;
-
-	wait1Msec(700);
-
-	turnEuler(35, 40, false);
-
-	driveBackwardDistAC(105, 100);
-
-	turnEuler(60, 50, false);
-
-	driveBackwardDist(5,50);
-
-	liftMove(RESET);
-
-	/*
-	turnEuler(30, 50, false);
-
-	driveForwardDist(80,100);
-
-	turnEuler(180, 50, false);
-
-	liftMove(RESET);
-
-	*/
-
-	//keep driving
-	//driveBackward(1000);
-	//stop infront of the tube67
-	//driveStop();
-	//hook the tube
-	//hook(false);
-	//raise the arm
-	//liftMove(SIXTY_LIFT, true);
-	//open the gate
-	//turn
-	//turnEuler(35, 35, false);
-	//drive forward to the goal
-	//driveForward(4000);
-
+	autoRampDouble();
 }

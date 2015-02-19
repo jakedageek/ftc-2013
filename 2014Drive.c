@@ -7,7 +7,7 @@
 #pragma config(Motor,  mtr_S1_C2_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C3_2,     inRight,       tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_2,     inRight,       tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop, reversed)
 #pragma config(Servo,  srvo_S1_C1_1,    bananaServo,          tServoStandard)
@@ -54,7 +54,7 @@ task main(){
 	hook(true);			//reset servos
 	banana(false);
 	gate(false);
-	servo[hookFront] = 50;
+	fronthook(3);
 	//servo[bananaServo] = 200;
 	while(true){
     	// Drive controls

@@ -60,7 +60,7 @@ task main()
 	int j = 0;
 	int k = 0;
 	initializeRobot();
-	//waitForStart();
+	waitForStart();
 	banana(false);
 	while(true){
 		sonarvalue = USreadDist(Sonar);

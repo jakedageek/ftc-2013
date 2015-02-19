@@ -1,19 +1,20 @@
 #ifndef LIFT_H
 #define LIFT_H
 
-#define RESET 50
+#define RESET 25
 #define THIRTY_LIFT 1400
 #define SIXTY_LIFT 2350
-#define NINETY_LIFT 3400
+#define NINETY_LIFT 3450
 #define GOAL_LIFT 4550
 #define MAX_LIFT 5000
 #define LIFT_UP 100
-#define LIFT_DOWN -3
+#define LIFT_DOWN -5
 #define LIFT_STALL 10
 
 void liftMove(int target);
 void liftMan(int up);
 void hook(bool up);
+void fronthook(int pos);
 void gate(bool open);
 void banana(bool score);
 void bananaman(bool score);
@@ -29,12 +30,18 @@ void liftMove(int target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			motor[liftLeft] = LIFT_UP;
 			motor[liftRight] = LIFT_UP;
-		    motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2)) / 2;
-        	motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2)) / 2;
+
+		  motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
+      motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
+
+			if(joy1Btn(CONTROLLER_R3)){
+				hook(false);
+			}else if(joy1Btn(CONTROLLER_L3)){
+				hook(true);
+			}
 		}
 		motor[liftLeft] = LIFT_STALL;
 		motor[liftRight] = LIFT_STALL;
-		wait1Msec(100);
 		banana(true);
 	}else{ 				//if the lift is moving DOWN
 		banana(false);
@@ -43,8 +50,15 @@ void liftMove(int target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			motor[liftLeft] = LIFT_DOWN;
 			motor[liftRight] = LIFT_DOWN;
-			motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2)) / 2;
-        	motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2)) / 2;
+
+			motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
+      motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
+
+			if(joy1Btn(CONTROLLER_R3)){
+				hook(false);
+			}else if(joy1Btn(CONTROLLER_L3)){
+				hook(true);
+			}
 		}
 		motor[liftLeft] = LIFT_STALL;
 		motor[liftRight] = LIFT_STALL;
@@ -85,11 +99,71 @@ void liftMan(int up){
 void hook(bool up){
 	if(up == true){
 		//hook up positions
-		servo[hookLeft] = 218; //calibrate
-		servo[hookRight] = 49; //calibrate
+		servo[hookLeft] = 212; //calibrate
+		servo[hookRight] = 54; //calibrate
 	}else{
 		servo[hookLeft] = 255; //calibrate
 		servo[hookRight] =13; //calibrate
+	}
+}
+
+void fronthook(int pos){
+	if(pos == 0){
+		//initialize
+		if(servo[hookFront] > 0){
+			while(servo[hookFront] > 0){
+				servo[hookFront] = servo[hookFront] - 2;
+				wait1Msec(10);
+			}
+		}else{
+			while(servo[hookFront] < 0){
+				servo[hookFront] = servo[hookFront] + 2;
+				wait1Msec(10);
+			}
+		}
+		servo[hookFront] = 0;
+	}else if(pos == 1){
+		//score
+		if(servo[hookFront] > 160){
+			while(servo[hookFront] > 160){
+				servo[hookFront] = servo[hookFront] - 2;
+				wait1Msec(10);
+			}
+		}else{
+			while(servo[hookFront] < 160){
+				servo[hookFront] = servo[hookFront] + 2;
+				wait1Msec(10);
+			}
+		}
+	servo[hookFront] = 160;
+	}else if(pos == 2){
+		//grab
+		if(servo[hookFront] > 244){
+			while(servo[hookFront] > 244){
+				servo[hookFront] = servo[hookFront] - 2;
+				wait1Msec(10);
+			}
+		}else{
+			while(servo[hookFront] < 244){
+				servo[hookFront] = servo[hookFront] + 2;
+				wait1Msec(10);
+			}
+		}
+	servo[hookFront] = 244;
+	}else if(pos == 3){
+		//tele
+		if(servo[hookFront] > 60){
+			while(servo[hookFront] > 60){
+				servo[hookFront] = servo[hookFront] - 2;
+				wait1Msec(10);
+			}
+		}else{
+			while(servo[hookFront] < 60){
+				servo[hookFront] = servo[hookFront] + 2;
+				wait1Msec(10);
+			}
+		}
+	servo[hookFront] = 60;
 	}
 }
 

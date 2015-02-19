@@ -60,7 +60,7 @@ task main()
 	gate(false);
 	nMotorEncoder[liftLeft] = 0;
 
-	servo[hookFront] = 196;
+	servo[hookFront] = 65;
 
 	wait1Msec(2000);
 	while(true){
