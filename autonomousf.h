@@ -38,10 +38,6 @@ void initializeRobot(){
 
 
 void autoStraight(){
-	liftMan(0);
-	wait1Msec(200);
-	liftMan(2);
-	wait1Msec(10);
 	driveBackwardDist(30, 30);	//drive out from the parking zone
 	wait1Msec(50);
 	turnEuler(3,50,false);
@@ -70,7 +66,7 @@ void autoStraight(){
 
 	turnEuler(90,55,false); //turn towards pole
 	wait1Msec(10);
-	driveBackwardDist(14, 50); //drive towards pole
+	driveBackwardDist(16, 50); //drive towards pole
 	turnEuler(90,55,true); //turn towards pole
 	driveBackwardDist(30,40); //drive against pole and knock it down
 	wait1Msec(10);
@@ -87,11 +83,11 @@ void autoDiag(){
 	writeDebugStreamLine("Function AutoDiag");
 	driveBackwardDist(10, 30);	//drive out from the parking zone
 	wait1Msec(10);
-	turnEuler(45,70,true); //turn left
+	turnEuler(45,60,true); //turn left
 	wait1Msec(10);
 	driveBackwardDist(32, 30); //drive left backwards
 	wait1Msec(10);
-	turnEuler(90,70,false); //turn towards the goal SYNC
+	turnEuler(90,60,false); //turn towards the goal SYNC
 	wait1Msec(10);
 	driveBackwardUltra(30, 35);
 	//driveBackwardDist(7, 30); // move towards the goal
@@ -126,7 +122,7 @@ void autoDiag(){
 
 	turnEuler(90,55,true); //turn towards pole
 	wait1Msec(10);
-	driveForwardDist(17, 50); //drive towards pole
+	driveForwardDist(19, 50); //drive towards pole
 	turnEuler(95,55,true); //turn towards pole
 	driveForwardDist(45,40); //drive against pole and knock it down
 	turnEuler(25,55,false);
@@ -144,11 +140,11 @@ void autoHoriz(){
 	wait1Msec(100);
 	turnEuler(35, 50, true);
 	wait1Msec(50);
-	driveBackwardDistAC(44,50);
+	driveBackwardDistAC(46,50);
 	wait1Msec(50);
 	turnEuler(115, 50, false);
 
-	driveBackwardUltra(30, 25);
+	driveBackwardUltra(25, 25);
 
 	fronthook(3);
 
@@ -174,7 +170,7 @@ void autoHoriz(){
 
 	liftMove(RESET);
 
-	turnEuler(80,55,true); //turn towards pole
+	turnEuler(70,55,true); //turn towards pole
 	wait1Msec(10);
 	driveForwardDist(16, 50); //drive towards pole
 	turnEuler(98,55,true); //turn towards pole

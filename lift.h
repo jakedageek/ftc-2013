@@ -34,11 +34,27 @@ void liftMove(int target){
 		  motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
       motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
 
+        if(joy1Btn(CONTROLLER_L1)){
+					motor[inLeft] = 100;
+					motor[inRight] = 100;
+				}else if(joy1Btn(CONTROLLER_L2)){
+					motor[inLeft] = -100;
+					motor[inRight] = -100;
+				}else{
+					motor[inLeft] = 0;
+					motor[inRight] = 0;
+				}
+
+
 			if(joy1Btn(CONTROLLER_R3)){
 				hook(false);
 			}else if(joy1Btn(CONTROLLER_L3)){
 				hook(true);
 			}
+
+			if(joy2Btn(CONTROLLER_X)){
+		  		break;
+		  }
 		}
 		motor[liftLeft] = LIFT_STALL;
 		motor[liftRight] = LIFT_STALL;
@@ -54,11 +70,27 @@ void liftMove(int target){
 			motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
       motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
 
+        if(joy1Btn(CONTROLLER_L1)){
+					motor[inLeft] = 100;
+					motor[inRight] = 100;
+				}else if(joy1Btn(CONTROLLER_L2)){
+					motor[inLeft] = -100;
+					motor[inRight] = -100;
+				}else{
+					motor[inLeft] = 0;
+					motor[inRight] = 0;
+				}
+
+
 			if(joy1Btn(CONTROLLER_R3)){
 				hook(false);
 			}else if(joy1Btn(CONTROLLER_L3)){
 				hook(true);
 			}
+
+			if(joy2Btn(CONTROLLER_X)){
+		  		break;
+		  }
 		}
 		motor[liftLeft] = LIFT_STALL;
 		motor[liftRight] = LIFT_STALL;
@@ -99,11 +131,11 @@ void liftMan(int up){
 void hook(bool up){
 	if(up == true){
 		//hook up positions
-		servo[hookLeft] = 212; //calibrate
-		servo[hookRight] = 54; //calibrate
+		servo[hookLeft] = 208; //calibrate
+		servo[hookRight] = 24; //calibrate
 	}else{
-		servo[hookLeft] = 255; //calibrate
-		servo[hookRight] =13; //calibrate
+		servo[hookLeft] = 250; //calibrate
+		servo[hookRight] =0; //calibrate
 	}
 }
 
