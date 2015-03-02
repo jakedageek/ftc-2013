@@ -48,7 +48,47 @@
 #include "util.h"
 #include "lift.h"
 
+task liftTask(){
+	while(true){
+		//lift preset operations
+		if(joy1Btn(CONTROLLER_A)){
+			liftMove(SIXTY_LIFT);
+		}else if(joy1Btn(CONTROLLER_B)){
+			liftMove(NINETY_LIFT);
+		}else if(joy1Btn(CONTROLLER_Y)){
+			liftMove(GOAL_LIFT);
+		}else if(joy1Btn(CONTROLLER_X)){
+			liftMove(RESET);
+		}else if(joy1Btn(CONTROLLER_R1)){ //manual adjustment in case encoder or lift goes wack
+	      liftMan(0);
+	  }else if(joy1Btn(CONTROLLER_R2)){
+	      liftMan(1);
+	  }else{
+	  		liftMan(2);
+		}
+
+		wait1Msec(10);
+	}
+}
+
+task e_stop(){
+	//Emergency stop protocol in case of dangerous or destructive situations
+	int emergency = 0;
+	while(true = 1){
+		if(joy2Btn(CONTROLLER_L1) && joy2Btn(CONTROLLER_L2) && joy2Btn(CONTROLLER_R1) && joy2Btn(CONTROLLER_R2)){
+			emergency ++;
+		}else{
+			emergency = 0;
+		}
+		if(emergency == 3){
+			StopAllTasks();
+		}
+		wait1Msec(500);
+	}
+}
+
 task main(){
+	StartTask(liftTask);
 	waitForStart();
 	nMotorEncoder[liftLeft] = 0;		//reset encoder
 	hook(true);			//reset servos
@@ -80,23 +120,6 @@ task main(){
 					//ball close
 					gate(false);
 				}
-
-				//preset controls
-				if(joy1Btn(CONTROLLER_A)){
-					liftMove(SIXTY_LIFT);
-				}else if(joy1Btn(CONTROLLER_B)){
-					liftMove(NINETY_LIFT);
-				}else if(joy1Btn(CONTROLLER_Y)){
-					liftMove(GOAL_LIFT);
-				}else if(joy1Btn(CONTROLLER_X)){
-					liftMove(RESET);
-				}else if(joy1Btn(CONTROLLER_R1)){ //manual adjustment in case encoder or lift goes wack
-		        liftMan(0);
-		    }else if(joy1Btn(CONTROLLER_R2)){
-		        liftMan(1);
-		    }else{
-		    		liftMan(2);
-		  	}
 
 		  	//reset encoder
 		  	if(joy2Btn(CONTROLLER_B)){

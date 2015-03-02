@@ -31,27 +31,6 @@ void liftMove(int target){
 			motor[liftLeft] = LIFT_UP;
 			motor[liftRight] = LIFT_UP;
 
-		  motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
-      motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
-
-        if(joy1Btn(CONTROLLER_L1)){
-					motor[inLeft] = 100;
-					motor[inRight] = 100;
-				}else if(joy1Btn(CONTROLLER_L2)){
-					motor[inLeft] = -100;
-					motor[inRight] = -100;
-				}else{
-					motor[inLeft] = 0;
-					motor[inRight] = 0;
-				}
-
-
-			if(joy1Btn(CONTROLLER_R3)){
-				hook(false);
-			}else if(joy1Btn(CONTROLLER_L3)){
-				hook(true);
-			}
-
 			if(joy2Btn(CONTROLLER_X)){
 		  		break;
 		  }
@@ -66,28 +45,6 @@ void liftMove(int target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			motor[liftLeft] = LIFT_DOWN;
 			motor[liftRight] = LIFT_DOWN;
-
-			motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
-      motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
-
-        if(joy1Btn(CONTROLLER_L1)){
-					motor[inLeft] = 100;
-					motor[inRight] = 100;
-				}else if(joy1Btn(CONTROLLER_L2)){
-					motor[inLeft] = -100;
-					motor[inRight] = -100;
-				}else{
-					motor[inLeft] = 0;
-					motor[inRight] = 0;
-				}
-
-
-			if(joy1Btn(CONTROLLER_R3)){
-				hook(false);
-			}else if(joy1Btn(CONTROLLER_L3)){
-				hook(true);
-			}
-
 			if(joy2Btn(CONTROLLER_X)){
 		  		break;
 		  }
