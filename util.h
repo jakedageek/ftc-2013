@@ -26,6 +26,8 @@
 #include "SMUXdriver/hitechnic-sensormux.h"
 #include "SMUXdriver/hitechnic-angle.h"
 #include "SMUXdriver/lego-ultrasound.h"
+#include "SMUXdriver/hitechnic-gyro.h"
+#include "SMUXdriver/hitechnic-colour-v2.h"
 
 #define CONTROLLER_A 02
 #define CONTROLLER_X 01
@@ -55,6 +57,10 @@ const bool kMaximumPowerLevel = 100;  // Adjust to set max power level to be use
 
 const tMUXSensor HTANG = msensor_S3_1;
 const tMUXSensor Sonar = msensor_S3_2;
+const tMUXSensor colorSensor = msensor_S3_4;
+const tMUXSensor gyro = msensor_S4_4;
+const tMUXSensor Sonar2 = msensor_S4_2;
+const tMUXSensor colorSensor2 = msensor_S4_1;
 
 int joystickValue(int controller, int joy, int axis)
 // Grab a joystick value from the controller state

@@ -1,13 +1,11 @@
 #pragma config(Hubs,  S1, HTServo,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S2, HTServo,  none,     none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
-#pragma config(Sensor, S2,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S3,     HTSMUX,         sensorI2CCustom)
-#pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
+#pragma config(Sensor, S4,     HTSMUX2,        sensorI2CCustom)
 #pragma config(Motor,  mtr_S1_C2_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C3_2,     inRight,       tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_2,     inRight,       tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop, reversed)
 #pragma config(Servo,  srvo_S1_C1_1,    bananaServo,          tServoStandard)
@@ -28,15 +26,15 @@
 #include "lift.h"
 #include "autonomous3.h"
 
-const tMUXSensor HTANG = msensor_S3_1;
-const tMUXSensor Sonar = msensor_S3_2;
-
 task main()
 
 {
 int initAng;
 int sonarvalue;
-float lastTime = nSysTime;				//used for dt calculation
+int sonarvalue2;
+int colorval1;
+int colorval2;
+float lastTime;				//used for dt calculation
 float dt = 0;					//dt for integration
 float g_val = 0;				//gyro value in degrees per second
 float currPos = 0;				//current turn position
@@ -47,13 +45,14 @@ initAng = HTANGreadAccumulatedAngle(HTANG);
 	hook(true);			//reset servos
 	banana(false);
 	gate(false);
-	servo[hookFront] = 254;
 
-
+	lastTime = nSysTime;
 	while(true){
 		sonarvalue = USreadDist(Sonar);
-		writeDebugStreamLine("sonar = %d", sonarvalue);
-		writeDebugStreamLine("accumulated angle: %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+		sonarvalue2 = USreadDist(Sonar2);
+		writeDebugStreamLine("sonar1 = %d, sonar2 = %d", sonarvalue, sonarvalue2);
+
+		writeDebugStreamLine("accumulated angle = %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 
 		g_val = gyroValueR();
 		dt = nSysTime - lastTime;
@@ -61,6 +60,14 @@ initAng = HTANGreadAccumulatedAngle(HTANG);
 		currPos += (dt/1000.) * g_val;
 		//integration end
 		writeDebugStreamLine("rotated %f", currPos);
+
+		colorval1 = HTCS2readColor(colorSensor);
+		colorval2 = HTCS2readColor(colorSensor2);
+		writeDebugStreamLine("color1 = %d, color2 = %d", colorval1, colorval2);
+
+
+
+		wait1Msec(10);
 	}
 
 

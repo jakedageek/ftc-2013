@@ -1,9 +1,7 @@
 #pragma config(Hubs,  S1, HTServo,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S2, HTServo,  none,     none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
-#pragma config(Sensor, S2,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S3,     HTSMUX,         sensorI2CCustom)
-#pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
+#pragma config(Sensor, S4,     HTSMUX2,        sensorI2CCustom)
 #pragma config(Motor,  mtr_S1_C2_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop, reversed)
@@ -74,7 +72,7 @@ task liftTask(){
 task e_stop(){
 	//Emergency stop protocol in case of dangerous or destructive situations
 	int emergency = 0;
-	while(true = 1){
+	while(true){
 		if(joy2Btn(CONTROLLER_L1) && joy2Btn(CONTROLLER_L2) && joy2Btn(CONTROLLER_R1) && joy2Btn(CONTROLLER_R2)){
 			emergency ++;
 		}else{
@@ -89,6 +87,7 @@ task e_stop(){
 
 task main(){
 	StartTask(liftTask);
+	StartTask(e_stop);
 	waitForStart();
 	nMotorEncoder[liftLeft] = 0;		//reset encoder
 	hook(true);			//reset servos
