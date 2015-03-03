@@ -16,6 +16,7 @@ void driveStop(bool forward);
 void turnEuler(int degrees, int speed, bool left);
 float gyroValue();
 float gyroValueR();
+float gyro_zero;
 
 #include "util.h"
 
@@ -45,11 +46,16 @@ THE SOFTWARE.
 
 //gyroscope calibration - run before use
 void calibrateGyro() {
-	float gyro_zero;
-	gyro_zero = HTGYROstartCal(gyro);
-	HTGYROsetCal(gyro, gyro_zero);
-}
+	HTGYROsetCal(gyro, 0);
+	gyro_zero = 0;
 
+	for (int i = 0; i < 10; i++){
+		gyro_zero += HTGYROreadRot(gyro);
+		wait1Msec(100);
+	}
+
+	gyro_zero /= 10;
+}
 //drive for a certain time at a certain speed
 void driveForward(int millis, int speed) {
 	driveForward(speed);
@@ -416,11 +422,11 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 }
 
 float gyroValue() {
-	return abs(HTGYROreadRot(gyro));
+	return abs(HTGYROreadRot(gyro) - gyro_zero);
 }
 
 float gyroValueR() {
-	return HTGYROreadRot(gyro);
+	return HTGYROreadRot(gyro) - gyro_zero;
 }
 
 #endif
