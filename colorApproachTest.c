@@ -24,10 +24,12 @@
 #include "util.h"
 #include "lift.h"
 #include "autonomous3.h"
+#include "autonomousf.h"
 
 task main()
 {
-
-	rampCLine(true, 30);
+	initializeRobot();
+	wait1Msec(500);
+	rampCLine(false, 20);
 
 }

@@ -369,7 +369,7 @@ void autoRampDouble(){
 	wait1Msec(200);
 	liftMan(2);
 
-	driveBackwardDist(50,30);
+	driveBackwardDistAC(50,30);
 
 	wait1Msec(100);
 
