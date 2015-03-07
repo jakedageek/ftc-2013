@@ -170,12 +170,12 @@ void banana(bool score){
 		//banana score
 		if(servo[bananaServo] > 116){
 			while(servo[bananaServo] > 116){
-				servo[bananaServo] = servo[bananaServo] - 1;
+				servo[bananaServo] = servo[bananaServo] - 2;
 				wait1Msec(10);
 			}
 		}else{
 			while(servo[bananaServo] < 116){
-				servo[bananaServo] = servo[bananaServo] + 1;
+				servo[bananaServo] = servo[bananaServo] + 2;
 				wait1Msec(10);
 			}
 		}
@@ -184,12 +184,12 @@ void banana(bool score){
 	}else{
 		if(servo[bananaServo] > 196){
 			while(servo[bananaServo] > 196){
-				servo[bananaServo] = servo[bananaServo] - 1;
+				servo[bananaServo] = servo[bananaServo] - 2;
 				wait1Msec(10);
 			}
 		}else{
 			while(servo[bananaServo] < 196){
-				servo[bananaServo] = servo[bananaServo] + 1;
+				servo[bananaServo] = servo[bananaServo] + 2;
 				wait1Msec(10);
 			}
 		}

@@ -57,14 +57,15 @@ task main()
 	int k = 0;
 	int sonarvalue;
 	int sonarvalue2;
+
 	initializeRobot();
-	waitForStart();
+	//waitForStart();
 	banana(false);
 	while(true){
 		sonarvalue = USreadDist(Sonar);
 		sonarvalue2 = USreadDist(Sonar2);
 		writeDebugStreamLine("sonar = %d", sonarvalue);
-		if(sonarvalue == 255){
+		if(sonarvalue == 255 && sonarvalue2 == 255){
 			//Diagonal center console
 			a++;
 			writeDebugStreamLine("a = %d", a);
@@ -75,7 +76,7 @@ task main()
 			}
 			//The ultrasonic sensor cannot detect diagonal surfaces - therefore, it returns 255 as its default value.
 
-		}else if(abs(sonarvalue) < 118 && abs(sonarvalue) != 0){
+		}else if(abs(sonarvalue) < 118 || abs(sonarvalue2) < 118){
 			//goal is straight ahead
 			j++;
 			writeDebugStreamLine("j = %d", j);
@@ -84,7 +85,7 @@ task main()
 				autoStraight();
 				break;
 			}
-		}else if(abs(sonarvalue) >= 118){
+		}else if(abs(sonarvalue) >= 118 || abs(sonarvalue2) >= 118){
 			//goal is sideways
 			k++;
 			writeDebugStreamLine("k = %d", k);
