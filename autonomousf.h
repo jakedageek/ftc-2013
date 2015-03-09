@@ -40,10 +40,11 @@ void initializeRobot(){
 void autoStraight(){
 	driveBackwardDist(30, 30);	//drive out from the parking zone
 	wait1Msec(50);
-	turnEuler(3,50,false);
+	turnEuler(3,50,true);
 
 	fronthook(3);
 
+	intakeKnock();
 	liftMove(GOAL_LIFT);
 	wait1Msec(100);
 
@@ -77,9 +78,6 @@ void autoStraight(){
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 void autoDiag(){
-	liftMan(0);
-	wait1Msec(200);
-	liftMan(2);
 	writeDebugStreamLine("Function AutoDiag");
 	driveBackwardDist(10, 30);	//drive out from the parking zone
 	wait1Msec(10);
@@ -95,7 +93,7 @@ void autoDiag(){
 	wait1Msec(50);
 
 	fronthook(3);
-
+	intakeKnock();
 	liftMove(GOAL_LIFT);
 	wait1Msec(100);
 
@@ -150,6 +148,7 @@ void autoHoriz(){
 
 	wait1Msec(150);
 
+	intakeKnock();
 	liftMove(GOAL_LIFT);
 	wait1Msec(100);
 

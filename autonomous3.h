@@ -15,7 +15,6 @@ void driveStop(bool forward, int speed);
 void driveStop(bool forward);
 void turnEuler(int degrees, int speed, bool left);
 void rampCLine(bool forward, int speed);
-void rampCAppr(bool forward, int speed);
 float gyroValue();
 float gyroValueR();
 float gyro_zero;
@@ -465,74 +464,7 @@ void rampCLine(bool forward, int speed){
 		if(flagD && flagC){
 			break;
 		}
-
-		/*
-		if(flag5 && (colorIn1 == 2 || colorIn1 == 3 || colorIn1 == 8 || colorIn1 == 9)){
-			if(forward){
-				motor[leftDrive] = -speed;
-			}else{
-				motor[leftDrive] = speed;
-			}
-			flag1 = true;
-			flag5 = false;
-		}
-		if(flag5 && (colorIn2 == 2 || colorIn2 == 3 || colorIn2 == 8 || colorIn2 == 9)){
-			if(forward){
-				motor[rightDrive] = -speed;
-			}else{
-				motor[rightDrive] = speed;
-			}
-			flag2 = true;
-			flag5 = false;
-		}
-		if(flag1 && flag6){
-			if((colorIn2 == 2 || colorIn2 == 3 || colorIn2 == 8 || colorIn2 == 9)){
-				flag6 = false;
-				flag3 = true;
-			}
-		}
-		if(flag3 && colorIn2 > 10){
-			motor[leftDrive] = 0;
-			motor[rightDrive] = 0;
-			break;
-		}
-		if(flag2 && flag7){
-			if((colorIn1 == 2 || colorIn1 == 3 || colorIn1 == 8 || colorIn1 == 9)){
-				motor[leftDrive] = 0;
-				motor[rightDrive] = 0;
-				flag7 = false;
-				flag4 = true;
-			}
-		}
-		if(flag4 && colorIn1 > 10){
-			motor[leftDrive] = 0;
-			motor[rightDrive] = 0;
-			break;
-		}
-		*/
 	}
-}
-
-void rampCAppr(bool forward, int speed){
-	//wrapper for rampCLine for detection of driving off the ramp
-	int colorIn1;
-	int colorIn2;
-	if(forward){
-		motor[leftDrive] = speed;
-		motor[rightDrive] = speed;
-	}else{
-		motor[leftDrive] = -speed;
-		motor[rightDrive] = -speed;
-	}
-	while(true){
-		colorIn1 = HTCS2readColor(colorSensor);
-		colorIn2 = HTCS2readColor(colorSensor2);
-		if(colorIn1 > 10 && colorIn2 > 10){
-			break;
-		}
-	}
-	rampCLine(forward, speed);
-
 }
 
 float gyroValue() {

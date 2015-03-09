@@ -7,6 +7,7 @@
 #define NINETY_LIFT 3450
 #define GOAL_LIFT 4550
 #define MAX_LIFT 5000
+#define INTAKE_LIFT 800
 #define LIFT_UP 100
 #define LIFT_DOWN -5
 #define LIFT_STALL 10
@@ -19,6 +20,7 @@ void gate(bool open);
 void banana(bool score);
 void bananaman(bool score);
 void bananaKnock();
+void intakeKnock();
 
 bool bananascore = false;
 
@@ -207,6 +209,14 @@ void bananaKnock(){
 	}else{
 		writeDebugStreamLine("knock failed");
 	}
+}
+
+void intakeKnock(){
+	liftMan(0);
+	wait1Msec(200);
+	servo[bananaServo] = servo[bananaServo] - 10;
+	wait1Msec(300);
+	servo[bananaServo] = servo[bananaServo] + 10;
 }
 
 void bananaman(bool score){

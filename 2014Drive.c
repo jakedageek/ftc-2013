@@ -46,23 +46,45 @@
 #include "util.h"
 #include "lift.h"
 
+bool slow = false;
+
 task liftTask(){
+	bool automatic = true;
 	while(true){
 		//lift preset operations
-		if(joy1Btn(CONTROLLER_A)){
+		if(joy1Btn(CONTROLLER_A) && automatic == false){
 			liftMove(SIXTY_LIFT);
-		}else if(joy1Btn(CONTROLLER_B)){
+		}else if(joy1Btn(CONTROLLER_B) && automatic == false){
 			liftMove(NINETY_LIFT);
+		}else if(joy1Btn(CONTROLLER_A) && automatic == true){
+			liftMove(SIXTY_LIFT);
+			gate(true);
+			wait1Msec(1500);
+			gate(false);
+		}else if(joy1Btn(CONTROLLER_B) && automatic == true){
+			liftMove(NINETY_LIFT);
+			gate(true);
+			wait1Msec(1500);
+			gate(false);
 		}else if(joy1Btn(CONTROLLER_Y)){
 			liftMove(GOAL_LIFT);
-		}else if(joy1Btn(CONTROLLER_X)){
+		}else if(joy1Btn(CONTROLLER_X) || joystick.joy2_TopHat == 4){
 			liftMove(RESET);
 		}else if(joy1Btn(CONTROLLER_R1)){ //manual adjustment in case encoder or lift goes wack
 	      liftMan(0);
 	  }else if(joy1Btn(CONTROLLER_R2)){
 	      liftMan(1);
+	  }else if(joystick.joy1_TopHat == 2){
+	  	gate(true);
 	  }else{
 	  		liftMan(2);
+	  		gate(false);
+		}
+
+		if(joy2Btn(CONTROLLER_A)){
+			automatic = true;
+		}else if(joy2Btn(CONTROLLER_Y)){
+			automatic = false;
 		}
 
 		wait1Msec(10);
@@ -97,8 +119,13 @@ task main(){
 	//servo[bananaServo] = 200;
 	while(true){
     	// Drive controls
-        motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
-        motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
+				if(slow == false){
+	        motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2));
+	        motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2));
+	      }else{
+	      	motor[leftDrive] = scaleJoystick(joystickValue(1, 1, 2)) / 2;
+	        motor[rightDrive] = scaleJoystick(joystickValue(1, 2, 2)) / 2;
+	      }
 
         //ball carrier controls
         if(joystick.joy1_TopHat == 6){
@@ -109,15 +136,6 @@ task main(){
 					//ball carrier down
 					//banana(false);
 					bananaman(false);
-				}
-
-				//ball release controls - on toggle
-				if(joystick.joy1_TopHat == 2){
-					//ball release
-					gate(true);
-				}else{
-					//ball close
-					gate(false);
 				}
 
 		  	//reset encoder
@@ -143,6 +161,12 @@ task main(){
 				}else{
 					motor[inLeft] = 0;
 					motor[inRight] = 0;
+				}
+
+				if(joy2Btn(CONTROLLER_R3)){
+					slow = false;
+				}else if(joy2Btn(CONTROLLER_L3)){
+					slow = true;
 				}
 			}
 	}
