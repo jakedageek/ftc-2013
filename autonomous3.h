@@ -300,6 +300,7 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 	for(i=0; i < (slopeTime/10); i++){
 		//integration start
 		g_val = gyroValue();
+		writeDebugStreamLine("%f", g_val);
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
 		currPos += (dt/1000.) * g_val;
@@ -340,6 +341,7 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 	while(true){
 		//integration start
 		g_val = gyroValue();
+		writeDebugStreamLine("%f", g_val);
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
 		currPos += (dt/1000.) * g_val;
@@ -356,6 +358,7 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 	for(i=0; i < (slopeTime/10); i++){
 		//integration start
 		g_val = gyroValue();
+		writeDebugStreamLine("%f", g_val);
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
 		currPos += (dt/1000.) * g_val;
@@ -404,7 +407,8 @@ void turnEuler(int degrees, int speed, bool left) { // degrees in degrees, speed
 	//writeDebugStreamLine("Overturning:");
 	lastTime = nSysTime;
 	for(i=0; i < 30; i++) {
-		g_val = gyroValue();
+		g_val = gyroValue();\
+		writeDebugStreamLine("%f", g_val);
 		dt = nSysTime - lastTime;
 		lastTime = nSysTime;
 		currPos += (dt/1000.) * g_val;

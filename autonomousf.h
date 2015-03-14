@@ -40,7 +40,7 @@ void initializeRobot(){
 void autoStraight(){
 	driveBackwardDist(30, 30);	//drive out from the parking zone
 	wait1Msec(50);
-	turnEuler(3,50,true);
+	turnEuler(6,50,true);
 
 	fronthook(3);
 
@@ -48,18 +48,19 @@ void autoStraight(){
 	liftMove(GOAL_LIFT);
 	wait1Msec(100);
 
-	driveBackwardDist(8,15); //move closer
+	driveBackwardDist(9,15); //move closer
 
-	wait1Msec(1000);
+	wait1Msec(2000);
 
 	gate(true);
 	wait1Msec(100);
-	bananaKnock();
-	wait1Msec(100);
+	//bananaKnock();
+	flickIt();
+	wait1Msec(1000);
 	gate(false);
 	wait1Msec(50);
 
-	driveForwardDist(5,15); //move closer
+	driveForwardDist(6,15); //move closer
 
 	wait1Msec(500);
 
@@ -85,7 +86,7 @@ void autoDiag(){
 	wait1Msec(10);
 	driveBackwardDist(32, 30); //drive left backwards
 	wait1Msec(10);
-	turnEuler(90,60,false); //turn towards the goal SYNC
+	turnEuler(85,60,false); //turn towards the goal SYNC
 	wait1Msec(10);
 	driveBackwardUltra(30, 35);
 	//driveBackwardDist(7, 30); // move towards the goal
@@ -99,12 +100,13 @@ void autoDiag(){
 
 	driveBackwardDist(8,15); //move closer
 
-	wait1Msec(1000);
+	wait1Msec(2000);
 	gate(true);
 
 	wait1Msec(100);
-	bananaKnock();
-	wait1Msec(100);
+	//bananaKnock();
+	flickIt();
+	wait1Msec(1000);
 	gate(false);
 	wait1Msec(50);
 
@@ -158,8 +160,9 @@ void autoHoriz(){
 	gate(true);
 
 	wait1Msec(100);
-	bananaKnock();
-	wait1Msec(100);
+	//bananaKnock();
+	flickIt();
+	wait1Msec(1000);
 	gate(false);
 	wait1Msec(50);
 

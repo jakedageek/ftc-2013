@@ -5,8 +5,8 @@
 #define THIRTY_LIFT 1400
 #define SIXTY_LIFT 2350
 #define NINETY_LIFT 3450
-#define GOAL_LIFT 4550
-#define MAX_LIFT 5000
+#define GOAL_LIFT 4550 + 340
+#define MAX_LIFT 5100
 #define INTAKE_LIFT 800
 #define LIFT_UP 100
 #define LIFT_DOWN -5
@@ -21,6 +21,7 @@ void banana(bool score);
 void bananaman(bool score);
 void bananaKnock();
 void intakeKnock();
+void flickIt();
 
 bool bananascore = false;
 
@@ -91,7 +92,7 @@ void hook(bool up){
 	if(up == true){
 		//hook up positions
 		servo[hookLeft] = 208; //calibrate
-		servo[hookRight] = 24; //calibrate
+		servo[hookRight] = 34; //calibrate
 	}else{
 		servo[hookLeft] = 250; //calibrate
 		servo[hookRight] =0; //calibrate
@@ -203,9 +204,9 @@ void banana(bool score){
 //knocks the banana down to score easier
 void bananaKnock(){
 	if(bananascore){
-		servo[bananaServo] = servo[bananaServo] - 4;
+		servo[bananaServo] = servo[bananaServo] - 3;
 		wait1Msec(1300);
-		servo[bananaServo] = servo[bananaServo] + 4;
+		servo[bananaServo] = servo[bananaServo] + 3;
 	}else{
 		writeDebugStreamLine("knock failed");
 	}
@@ -227,6 +228,14 @@ void bananaman(bool score){
 		servo[bananaServo] = servo[bananaServo] + 1;
 		wait1Msec(50);
 	}
+}
+
+void flickIt(){
+	servo[bananaServo] = 140;
+	wait1Msec(500);
+	servo[bananaServo] = 130;
+	wait1Msec(100);
+	servo[bananaServo] = 120;
 }
 
 
