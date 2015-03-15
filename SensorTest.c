@@ -4,7 +4,7 @@
 #pragma config(Sensor, S4,     HTSMUX2,        sensorI2CCustom)
 #pragma config(Motor,  mtr_S1_C2_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop, reversed)
+#pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_2,     inRight,       tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop, reversed)

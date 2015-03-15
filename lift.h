@@ -5,8 +5,8 @@
 #define THIRTY_LIFT 1400
 #define SIXTY_LIFT 2350
 #define NINETY_LIFT 3450
-#define GOAL_LIFT 4550 + 340
-#define MAX_LIFT 5100
+#define GOAL_LIFT 4550 + 300
+#define MAX_LIFT 5000
 #define INTAKE_LIFT 800
 #define LIFT_UP 100
 #define LIFT_DOWN -5

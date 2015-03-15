@@ -4,7 +4,7 @@
 #pragma config(Sensor, S4,     HTSMUX2,        sensorI2CCustom)
 #pragma config(Motor,  mtr_S1_C2_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C2_2,     liftLeft,      tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_1,     inLeft,        tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C3_2,     inRight,       tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C4_1,     rightDrive,    tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     liftRight,     tmotorTetrix, openLoop, reversed)
@@ -49,7 +49,7 @@
 bool slow = false;
 
 task liftTask(){
-	bool automatic = true;
+	bool automatic = false;
 	while(true){
 		//lift preset operations
 		if(joy1Btn(CONTROLLER_A) && automatic == false){
@@ -68,7 +68,7 @@ task liftTask(){
 			gate(false);
 		}else if(joy1Btn(CONTROLLER_Y)){
 			liftMove(GOAL_LIFT);
-		}else if(joy1Btn(CONTROLLER_X) || joystick.joy2_TopHat == 4){
+		}else if(joy1Btn(CONTROLLER_X) || joystick.joy2_TopHat == DPAD_DOWN){
 			liftMove(RESET);
 		}else if(joy1Btn(CONTROLLER_R1)){ //manual adjustment in case encoder or lift goes wack
 	      liftMan(0);
@@ -167,6 +167,12 @@ task main(){
 					slow = false;
 				}else if(joy2Btn(CONTROLLER_L3)){
 					slow = true;
+				}
+
+				if(joystick.joy2_TopHat == DPAD_LEFT){
+					fronthook(3);
+				}else if(joystick.joy2_TopHat == DPAD_RIGHT){
+					fronthook(2);
 				}
 			}
 	}

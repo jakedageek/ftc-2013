@@ -11,6 +11,7 @@ void driveBackwardDist(int inches, int speed);
 void driveForwardDistAC(int inches, float speed);
 void driveBackwardDistAC(int inches, float speed);
 void driveBackwardUltra(int speed, int ultra);
+void driveBackwardDistPC(int inches, float speed);
 void driveStop(bool forward, int speed);
 void driveStop(bool forward);
 void turnEuler(int degrees, int speed, bool left);
@@ -218,6 +219,65 @@ void driveBackwardDistAC(int inches, float speed) {
 	writeDebugStreamLine("------------------------");
 	driveStop(false, speed);
 	wait1Msec(100);
+	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+}
+
+void driveBackwardDistPC(int inches, float speed) {
+	//driving forward using the angle sensor
+	int degrees;
+	int initAng;
+
+	//managing the angle
+	float lastTime = nSysTime;				//used for dt calculation
+	float dt = 0;											//dt for integration
+	float g_val = 0;									//gyro value in degrees per second
+	float currPos = 0;								//current turn position
+
+	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
+	wait1Msec(100);
+	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
+		//gyro code
+		g_val = gyroValueR();
+		dt = nSysTime - lastTime;
+		lastTime = nSysTime;
+		currPos += (dt/1000.) * g_val;
+
+		writeDebugStreamLine("Turned %f", currPos);
+
+		motor[leftDrive] = -speed;
+		motor[rightDrive] = -speed;
+
+		/*
+
+		if(currPos > 0){
+			motor[leftDrive] = -speed;
+			motor[rightDrive] = -speed + (abs(currPos) * factor);
+			writeDebugStreamLine("rightDrive = %f", -speed + (abs(currPos) * factor));
+		}else if(currPos < 0){
+			motor[leftDrive] = -speed + (abs(currPos) * factor);
+			motor[rightDrive] = -speed;
+			writeDebugStreamLine("leftDrive = %f", -speed + (abs(currPos) * factor));
+		}else{
+			motor[leftDrive] = -speed;
+			motor[rightDrive] = -speed;
+			writeDebugStreamLine("straight");
+		}
+
+		*/
+
+		writeDebugStreamLine("accumulated angle = %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
+	}
+	writeDebugStreamLine("------------------------");
+	driveStop(false, speed);
+	wait1Msec(100);
+
+	if(currPos > 0){
+		turnEuler(abs(currPos), speed, true);
+	}else if(currPos < 0){
+		turnEuler(abs(currPos), speed, false);
+	}
+
 	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 }
 
@@ -430,13 +490,6 @@ void rampCLine(bool forward, int speed){
 	//squaring up to the colored tape on the field for consistency
 	int colorIn1;
 	int colorIn2;
-	bool flag1 = false;
-	bool flag2 = false;
-	bool flag3 = false;
-	bool flag4 = false;
-	bool flag5 = true;
-	bool flag6 = true;
-	bool flag7 = true;
 	bool flagA = true;
 	bool flagB = false;
 	bool flagC = false;

@@ -30,22 +30,12 @@
 //RAMP AUTONOMOUS
 
 task main(){
-	/*
-	int degrees;						//used for degrees calculation
-	int initAng;						//used for angle sensor calcs
-	int inches = 50;				//inches needed to move on first movement
-	int speed = 30;					//speed going down the ramp
-	float lastTime = 0;				//used for dt calculation
-
-
-	float dt = 0;					//dt for integration
-	float g_val = 0;				//gyro value in degrees per second
-	float currPos = 0;				//current turn position
-	*/
 
 	initializeRobot();		//reset servos
 
 	//waitForStart();
 
-	autoRampDouble();
+	//autoRampDouble();
+
+	autoRamp60();
 }

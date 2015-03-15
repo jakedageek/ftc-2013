@@ -5,9 +5,6 @@
 #include "lift.h"
 #include "autonomous3.h"
 
-const tMUXSensor HTANG = msensor_S3_1;
-const tMUXSensor Sonar = msensor_S3_2;
-
 //TOWER AUTONOMOUS
 int sonarvalue = 0;
 void initializeRobot();
@@ -21,6 +18,7 @@ void autoD();
 void autoPark30();
 void autoRampDouble();
 void autoRampOff();
+void autoRamp60();
 
 void initializeRobot(){
 	calibrateGyro();
@@ -421,6 +419,61 @@ void autoRampDouble(){
 void autoRampOff(){
 
 	driveBackwardDist(45,30);
+
+}
+
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Ramp 60 auto																																																*/
+/* ---------------------------------------------------------------------------------------------------------------- */
+
+void autoRamp60(){
+	/* LIFT LIFT BEFORE MOVING OFF RAMP */
+	liftMan(0);
+	wait1Msec(200);
+	liftMan(2);
+
+	driveBackwardDistPC(52,50);
+
+	wait1Msec(100);
+
+	driveBackwardDistAC(22, 70);
+
+	driveBackwardDist(17, 17);
+
+	fronthook(3);
+
+	wait1Msec(100);
+
+	hook(false);
+	liftMove(SIXTY_LIFT);
+	wait1Msec(1000);
+	gate(true);
+	wait1Msec(100);
+	bananaKnock();
+	wait1Msec(100);
+	gate(false);
+	wait1Msec(50);
+	liftMove(RESET);
+
+	driveForwardDist(3, 30);
+
+	turnEuler(15, 50, false);
+
+	driveForwardDist(3,30);
+
+	turnEuler(15,50, false);
+
+	driveForwardDistAC(75, 100);
+
+	turnEuler(170, 50, false);
+
+	//COMMENT OUT HERE
+
+	hook(true);
+
+	driveForwardDistAC(80, 100);
+
+	turnEuler(180, 50, false);
 
 }
 
