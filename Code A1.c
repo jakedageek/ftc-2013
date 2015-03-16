@@ -76,7 +76,7 @@ task main()
 			}
 			//The ultrasonic sensor cannot detect diagonal surfaces - therefore, it returns 255 as its default value.
 
-		}else if(abs(sonarvalue) < 118 || abs(sonarvalue2) < 118){
+		}else if((abs(sonarvalue) < 118 && abs(sonarvalue) > 90) || (abs(sonarvalue2) < 118 && abs(sonarvalue) > 90)){
 			//goal is straight ahead
 			j++;
 			writeDebugStreamLine("j = %d", j);

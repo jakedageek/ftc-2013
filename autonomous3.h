@@ -227,6 +227,9 @@ void driveBackwardDistPC(int inches, float speed) {
 	int degrees;
 	int initAng;
 
+	bool flag1 = false;
+	float correction = 0;
+
 	//managing the angle
 	float lastTime = nSysTime;				//used for dt calculation
 	float dt = 0;											//dt for integration
@@ -236,6 +239,9 @@ void driveBackwardDistPC(int inches, float speed) {
 	initAng = HTANGreadAccumulatedAngle(HTANG);		//reset accumulated angle
 	wait1Msec(100);
 	degrees = (inches - 1) * 80;		//momentum drives forward by 1 inch at 20 speed [M]
+
+	motor[leftDrive] = -speed;
+	motor[rightDrive] = -speed;
 	while(abs(HTANGreadAccumulatedAngle(HTANG)-initAng) < degrees){
 		//gyro code
 		g_val = gyroValueR();
@@ -245,8 +251,10 @@ void driveBackwardDistPC(int inches, float speed) {
 
 		writeDebugStreamLine("Turned %f", currPos);
 
-		motor[leftDrive] = -speed;
-		motor[rightDrive] = -speed;
+		if(currPos > 4 || currPos < -4){
+			flag1 = true;
+			correction = currPos;
+		}
 
 		/*
 
@@ -269,14 +277,18 @@ void driveBackwardDistPC(int inches, float speed) {
 		writeDebugStreamLine("accumulated angle = %d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 	}
 	writeDebugStreamLine("------------------------");
-	driveStop(false, speed);
+	driveStop(false);
 	wait1Msec(100);
 
-	if(currPos > 0){
-		turnEuler(abs(currPos), speed, true);
-	}else if(currPos < 0){
-		turnEuler(abs(currPos), speed, false);
+	if(flag1 == true && correction > 4){
+		writeDebugStreamLine("Correction: %f", currPos);
+		turnEuler(abs(currPos) - 2, 40, true);
+	}else if(flag1 == true && correction < -4){
+		writeDebugStreamLine("Correction: %f", currPos);
+		turnEuler(abs(currPos) - 2, 40, false);
 	}
+
+	wait1Msec(500);
 
 	writeDebugStreamLine("%d",abs(HTANGreadAccumulatedAngle(HTANG)-initAng));
 }

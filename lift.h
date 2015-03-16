@@ -4,8 +4,8 @@
 #define RESET 25
 #define THIRTY_LIFT 1400
 #define SIXTY_LIFT 2350
-#define NINETY_LIFT 3450
-#define GOAL_LIFT 4550 + 300
+#define NINETY_LIFT 3450 - 75
+#define GOAL_LIFT 4550 + 250
 #define MAX_LIFT 5000
 #define INTAKE_LIFT 800
 #define LIFT_UP 100
@@ -27,12 +27,27 @@ bool bananascore = false;
 
 //presets for the lift operation
 void liftMove(int target){
+	int oldstallVal = 0;
+	int newstallVal = 0;
+	int stallCount = 0;
 	//if the lift is moving UP
 	if(target > nMotorEncoder[liftLeft]){
 		while(nMotorEncoder[liftLeft] < target){
 			writeDebugStreamLine("Left Encoder %d", nMotorEncoder[liftLeft]);
 			motor[liftLeft] = LIFT_UP;
 			motor[liftRight] = LIFT_UP;
+
+			newstallVal = nMotorEncoder[liftLeft];
+			if(newstallVal == oldstallVal){
+				stallCount ++;
+			}else{
+				stallCount = 0;
+			}
+			oldstallVal = newstallVal;
+
+			if(stallCount == 200){
+				break;
+			}
 
 			if(joy2Btn(CONTROLLER_X)){
 		  		break;

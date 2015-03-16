@@ -120,8 +120,8 @@ void autoDiag(){
 
 	turnEuler(90,55,true); //turn towards pole
 	wait1Msec(10);
-	driveForwardDist(19, 50); //drive towards pole
-	turnEuler(95,55,true); //turn towards pole
+	driveForwardDist(16, 50); //drive towards pole
+	turnEuler(90,55,true); //turn towards pole
 	driveForwardDist(45,40); //drive against pole and knock it down
 	turnEuler(25,55,false);
 	driveBackwardDist(20,40);
@@ -152,7 +152,7 @@ void autoHoriz(){
 	liftMove(GOAL_LIFT);
 	wait1Msec(100);
 
-	driveBackwardUltra(15,13);
+	driveBackwardUltra(15,12);
 
 	wait1Msec(2000);
 	gate(true);
@@ -170,14 +170,17 @@ void autoHoriz(){
 
 	liftMove(RESET);
 
-	turnEuler(70,55,true); //turn towards pole
+	//pole
+
+	turnEuler(75,55,true); //turn towards pole
 	wait1Msec(10);
 	driveForwardDist(16, 50); //drive towards pole
-	turnEuler(98,55,true); //turn towards pole
-	driveForwardDist(30,40); //drive against pole and knock it down
-	turnEuler(30,55,false);
-	driveBackwardDist(10,40);
+	turnEuler(90,55,true); //turn towards pole
+	driveForwardDist(35,40); //drive against pole and knock it down
+	turnEuler(25,55,false);
+	driveBackwardDist(20,40);
 	wait1Msec(10);
+
 }
 
 /* ---------------------------------------------------------------------------------------------------------------- */
@@ -474,6 +477,55 @@ void autoRamp60(){
 	driveForwardDistAC(80, 100);
 
 	turnEuler(180, 50, false);
+
+}
+
+void autoRamp90(){
+	/* LIFT LIFT BEFORE MOVING OFF RAMP */
+	liftMan(0);
+	wait1Msec(200);
+	liftMan(2);
+
+	driveBackwardDistPC(55,40);
+
+	wait1Msec(100);
+
+	turnEuler(90, 50, false);
+
+	driveForwardDist(18, 30);
+
+	turnEuler(85, 50, true);
+
+	fronthook(3);
+
+	wait1Msec(100);
+
+	driveBackwardDistAC(30, 80);
+
+	wait1Msec(100);
+
+	turnEuler(45, 50, false);
+
+	driveBackwardDist(35, 25);
+
+	hook(false);
+	liftMove(NINETY_LIFT);
+	wait1Msec(1000);
+	gate(true);
+	wait1Msec(100);
+	bananaKnock();
+	wait1Msec(100);
+	gate(false);
+	wait1Msec(50);
+	liftMove(RESET);
+
+	driveForwardDist(17, 30);
+
+	turnEuler(25, 50, true);
+
+	driveForwardDistAC(80, 100);
+
+	turnEuler(170, 50, false);
 
 }
 

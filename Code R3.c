@@ -38,4 +38,6 @@ task main(){
 	//autoRampDouble();
 
 	autoRamp60();
+
+	//autoRamp90();
 }
